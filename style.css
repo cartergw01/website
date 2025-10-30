@@ -1,7 +1,17 @@
-/* General layout */
-html, body {
-  min-height: 100%;
+/* Background lives on html, not body */
+html {
+  min-height: 100vh;
   background: linear-gradient(180deg, #000000 0%, #02101f 25%, #03284a 65%, #064c86 100%);
+  background-color: #000;        /* fallback to prevent white flash */
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;  /* keeps gradient smooth on scroll */
+  overscroll-behavior: contain;  /* prevents iOS white flash bounce */
+}
+
+/* Body layout */
+body {
+  min-height: 100vh;
   color: #e5e7eb;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   text-align: left;
@@ -10,6 +20,7 @@ html, body {
   justify-content: center;
   padding: 48px 24px;
   animation: fadein 1s ease;
+  background: transparent; /* remove gradient box effect */
 }
 
 /* Mobile layout: allow scrolling */
@@ -92,7 +103,7 @@ ul.essay-list {
 ul.essay-list li {
   margin-bottom: 12px;
   padding-left: 16px;     /* subtle indent */
-  text-indent: -8px;      /* keeps link aligned visually */
+  text-indent: -8px;      /* keeps link visually aligned */
   position: relative;
 }
 
