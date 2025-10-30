@@ -86,9 +86,27 @@ ul.essay-list {
 }
 
 ul.essay-list li {
+  ul.essay-list li {
   margin-bottom: 12px;
+  padding-left: 16px;      /* adds a subtle indent */
+  text-indent: -8px;       /* keeps the link itself aligned visually */
+  list-style: none;        /* ensures no bullet shows */
+  position: relative;
 }
 
+ul.essay-list li::before {
+  content: "›";            /* adds a minimal arrow */
+  position: absolute;
+  left: 0;
+  color: #f97316;          /* same orange as your links */
+  font-weight: 600;
+}
+@media (max-width: 480px) {
+  ul.essay-list li {
+    padding-left: 12px;
+    text-indent: -6px;
+  }
+}
 ul.essay-list a {
   font-size: 18px;
   color: #e5e7eb;
