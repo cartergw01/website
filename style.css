@@ -4,7 +4,7 @@ html, body {
   background: linear-gradient(180deg, #000000 0%, #02101f 25%, #03284a 65%, #064c86 100%);
   color: #e5e7eb;
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-  text-align: center;
+  text-align: left;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,11 +28,11 @@ html, body {
 
 /* Main container */
 .wrap {
+  .wrap {
   max-width: 720px;
   margin: 0 auto;
   padding: 64px 24px 32px 24px;
 }
-
 /* Headings */
 h1 {
   font-size: 42px;
