@@ -16,18 +16,29 @@ body {
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   text-align: left;
   display: flex;
-  align-items: flex-start;       /* aligns to top instead of center */
+  align-items: flex-start;       /* align to top */
   justify-content: center;
-  padding: 32px 24px 48px 24px;  /* less top space */
+  padding: 24px 24px 48px 24px;  /* tighter top padding */
   animation: fadein 1s ease;
   background: transparent;
 }
 
-/* Mobile layout: allow scrolling */
+/* iOS safe-area handling */
+@supports (padding: max(0px)) {
+  body {
+    padding-top: max(8px, env(safe-area-inset-top) + 4px);
+  }
+}
+
+/* Mobile layout: allow scrolling and reduce spacing */
 @media (max-width: 768px) {
   html, body {
     display: block;
-    padding: 16px 16px 48px 16px; /* tighter top padding on mobile */
+    padding: 8px 16px 40px 16px; /* smaller top padding */
+  }
+
+  .wrap {
+    padding: 16px 16px 24px 16px; /* reduce top padding on mobile */
   }
 }
 
@@ -41,7 +52,7 @@ body {
 .wrap {
   max-width: 720px;
   margin: 0 auto;
-  padding: 64px 24px 32px 24px;
+  padding: 48px 24px 32px 24px; /* reduced top padding */
 }
 
 /* Headings */
@@ -133,6 +144,9 @@ ul.essay-list a:hover {
   color: #f97316;
   text-shadow: 0 0 6px rgba(249,115,22,0.5);
 }
+
+/* Remove accidental top margin from first element */
+.wrap > :first-child { margin-top: 0; }
 
 /* Footer */
 footer {
