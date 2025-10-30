@@ -28,17 +28,18 @@ html, body {
 
 /* Main container */
 .wrap {
-  .wrap {
   max-width: 720px;
   margin: 0 auto;
   padding: 64px 24px 32px 24px;
 }
+
 /* Headings */
 h1 {
   font-size: 42px;
   font-weight: 900;
   margin-bottom: 16px;
   color: #fff;
+  text-align: left;
 }
 
 h2 {
@@ -48,6 +49,7 @@ h2 {
   border-top: 1px solid rgba(255,255,255,0.1);
   padding-top: 24px;
   color: #f3f4f6;
+  text-align: left;
 }
 
 /* Paragraphs and text */
@@ -62,6 +64,7 @@ h2 {
   margin-bottom: 48px;
   color: #94a3b8;
   font-size: 16px;
+  text-align: left;
 }
 
 /* Hyperlinks */
@@ -81,32 +84,33 @@ a:hover {
 /* Essay list */
 ul.essay-list {
   list-style: none;
-  padding: 0;
+  padding-left: 0;
   margin-top: 8px;
+  text-align: left;
 }
 
 ul.essay-list li {
-  ul.essay-list li {
   margin-bottom: 12px;
-  padding-left: 16px;      /* adds a subtle indent */
-  text-indent: -8px;       /* keeps the link itself aligned visually */
-  list-style: none;        /* ensures no bullet shows */
+  padding-left: 16px;     /* subtle indent */
+  text-indent: -8px;      /* keeps link aligned visually */
   position: relative;
 }
 
 ul.essay-list li::before {
-  content: "›";            /* adds a minimal arrow */
+  content: "›";
   position: absolute;
   left: 0;
-  color: #f97316;          /* same orange as your links */
+  color: #f97316;
   font-weight: 600;
 }
+
 @media (max-width: 480px) {
   ul.essay-list li {
     padding-left: 12px;
     text-indent: -6px;
   }
 }
+
 ul.essay-list a {
   font-size: 18px;
   color: #e5e7eb;
@@ -124,4 +128,5 @@ footer {
   margin-top: 48px;
   color: #64748b;
   font-size: 14px;
+  text-align: left;
 }
