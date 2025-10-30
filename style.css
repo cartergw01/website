@@ -1,7 +1,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{
   min-height:100%;
-  background:#0b0c10;
+  background:linear-gradient(180deg, #021a33 0%, #032a4f 50%, #043b6d 100%);
   color:#e5e7eb;
   font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
   text-align:center;
