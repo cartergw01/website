@@ -16,18 +16,18 @@ body {
   font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
   text-align: left;
   display: flex;
-  align-items: center;
+  align-items: flex-start;       /* aligns to top instead of center */
   justify-content: center;
-  padding: 48px 24px;
+  padding: 32px 24px 48px 24px;  /* less top space */
   animation: fadein 1s ease;
-  background: transparent; /* remove gradient box effect */
+  background: transparent;
 }
 
 /* Mobile layout: allow scrolling */
 @media (max-width: 768px) {
   html, body {
     display: block;
-    padding: 32px 16px;
+    padding: 16px 16px 48px 16px; /* tighter top padding on mobile */
   }
 }
 
