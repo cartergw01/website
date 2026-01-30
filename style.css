@@ -8,18 +8,348 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --bg0: #000000;
+      --bg1: #02101f;
+      --bg2: #03284a;
+      --bg3: #064c86;
+
+      --text: #e5e7eb;
+      --muted: #cbd5e1;
+      --muted2: #94a3b8;
+      --footer: #64748b;
+
+      --orange: #f97316;
+
+      --stroke: rgba(255,255,255,0.10);
+      --panelTop: rgba(255,255,255,0.05);
+      --panelBot: rgba(255,255,255,0.02);
+
+      --radius: 18px;
+      --shadow: 0 24px 70px rgba(0,0,0,0.55);
+    }
+
+    /* Base gradient drift */
+    html {
+      min-height: 100vh;
+      background-color: #000;
+      background-image: linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 25%, var(--bg2) 65%, var(--bg3) 100%);
+      background-repeat: no-repeat;
+      background-size: 140% 140%;
+      background-attachment: fixed;
+      animation: baseDrift 26s ease-in-out infinite;
+      overscroll-behavior: contain;
+    }
+
+    @keyframes baseDrift {
+      0% { background-position: 30% 10%; }
+      50% { background-position: 70% 90%; }
+      100% { background-position: 30% 10%; }
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--text);
+      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      text-align: left;
+
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+
+      padding: 28px 18px 64px;
+      background: transparent;
+
+      animation: fadein 0.9s ease;
+    }
+
+    @keyframes fadein {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    * { box-sizing: border-box; }
+
+    /* Background overlays */
+    .bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .bgShift {
+      position: absolute;
+      inset: -35%;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(249,115,22,0.22), rgba(249,115,22,0) 55%),
+        radial-gradient(circle at 85% 25%, rgba(56,189,248,0.18), rgba(56,189,248,0) 58%),
+        radial-gradient(circle at 40% 90%, rgba(34,197,94,0.10), rgba(34,197,94,0) 62%);
+      filter: blur(46px);
+      opacity: 0.85;
+      mix-blend-mode: screen;
+      animation: glowDrift 18s ease-in-out infinite;
+    }
+
+    @keyframes glowDrift {
+      0% { transform: translate(0px,0px) scale(1); }
+      50% { transform: translate(18px,-14px) scale(1.03); }
+      100% { transform: translate(0px,0px) scale(1); }
+    }
+
+    .bgGrid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.22;
+      background-image:
+        linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: radial-gradient(circle at 50% 22%, rgba(0,0,0,1) 0%, rgba(0,0,0,0) 70%);
+      animation: gridBreath 10s ease-in-out infinite;
+    }
+
+    @keyframes gridBreath {
+      0% { opacity: 0.18; }
+      50% { opacity: 0.26; }
+      100% { opacity: 0.18; }
+    }
+
+    .bgNoise {
+      position: absolute;
+      inset: 0;
+      opacity: 0.09;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    /* Main container */
+    .wrap {
+      position: relative;
+      z-index: 1;
+
+      width: 100%;
+      max-width: 720px;
+      margin: 0 auto;
+
+      padding: 54px 34px 40px;
+
+      background: linear-gradient(180deg, var(--panelTop) 0%, var(--panelBot) 100%);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+
+    /* Headings */
+    h1 {
+      font-size: 46px;
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      margin: 0 0 18px;
+      color: #fff;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 68px;
+      border-top: 1px solid rgba(255,255,255,0.10);
+      padding-top: 26px;
+      color: #f3f4f6;
+    }
+
+    /* Light sweep on name */
+    .nameSweep {
+      position: relative;
+      display: inline-block;
+    }
+
+    .nameSweep::after {
+      content: "";
+      position: absolute;
+      top: -20%;
+      left: -40%;
+      width: 40%;
+      height: 160%;
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.40) 50%,
+        rgba(255,255,255,0) 100%
+      );
+      transform: skewX(-18deg);
+      filter: blur(1px);
+      opacity: 0;
+      animation: sweep 1.25s ease-out 0.35s 1 forwards;
+      mix-blend-mode: overlay;
+      pointer-events: none;
+    }
+
+    @keyframes sweep {
+      0% { opacity: 0; transform: translateX(0) skewX(-18deg); }
+      12% { opacity: 1; }
+      100% { opacity: 0; transform: translateX(280%) skewX(-18deg); }
+    }
+
+    /* Text */
+    .bio {
+      font-size: 17px;
+      color: var(--muted);
+      margin: 0 0 24px;
+      line-height: 1.75;
+    }
+
+    .links {
+      margin: 6px 0 54px;
+      color: var(--muted2);
+      font-size: 16px;
+    }
+
+    /* Links */
+    a, a:visited {
+      color: var(--orange);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border 0.2s ease, text-shadow 0.25s ease;
+    }
+
+    a:hover {
+      border-bottom: 1px solid var(--orange);
+      text-shadow: 0 0 10px rgba(249,115,22,0.55);
+    }
+
+    /* Essays: aligned chevrons */
+    ul.essay-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+    }
+
+    ul.essay-list li {
+      display: grid;
+      grid-template-columns: 14px 1fr;
+      column-gap: 10px;
+      align-items: baseline;
+      margin-bottom: 12px;
+    }
+
+    ul.essay-list li::before {
+      content: "›";
+      color: var(--orange);
+      font-weight: 600;
+      opacity: 0.95;
+      line-height: 1;
+    }
+
+    ul.essay-list a {
+      display: inline-block;
+      font-size: 18px;
+      color: #e5e7eb;
+      padding: 6px 8px;
+      margin-left: -8px;
+      border-radius: 10px;
+      transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    ul.essay-list a:hover {
+      border-bottom-color: transparent;
+      color: var(--orange);
+      background: rgba(249,115,22,0.08);
+      transform: translateX(4px);
+      box-shadow: 0 0 0 1px rgba(249,115,22,0.18) inset;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 56px;
+      color: var(--footer);
+      font-size: 14px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 18px;
+    }
+
+    /* Cursor accent */
+    .cursorDot,
+    .cursorRing {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 9999;
+      pointer-events: none;
+      transform: translate(-100px, -100px);
+    }
+
+    .cursorDot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(249,115,22,0.95);
+      box-shadow: 0 0 18px rgba(249,115,22,0.35);
+      margin-left: -3px;
+      margin-top: -3px;
+    }
+
+    .cursorRing {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 1px solid rgba(249,115,22,0.35);
+      box-shadow: 0 0 26px rgba(249,115,22,0.10);
+      margin-left: -17px;
+      margin-top: -17px;
+      transition: width 160ms ease, height 160ms ease, margin 160ms ease, border-color 160ms ease, opacity 160ms ease;
+      opacity: 0.85;
+    }
+
+    .cursorRing.active {
+      width: 48px;
+      height: 48px;
+      margin-left: -24px;
+      margin-top: -24px;
+      border-color: rgba(249,115,22,0.55);
+      opacity: 1;
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      body { padding: 16px 14px 52px; }
+      .wrap { padding: 40px 18px 34px; border-radius: 16px; }
+      h1 { font-size: 38px; }
+
+      .bgShift { opacity: 0.55; }
+      .bgGrid { opacity: 0.16; }
+      .bgNoise { opacity: 0.07; }
+    }
+
+    /* iOS safe area */
+    @supports (padding: max(0px)) {
+      body { padding-top: max(10px, env(safe-area-inset-top) + 6px); }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      html { background-attachment: scroll; animation: none; background-size: cover; }
+      .bgShift { animation: none; }
+      .bgGrid { animation: none; }
+      .nameSweep::after { animation: none; opacity: 0; }
+      .cursorDot, .cursorRing { display: none; }
+      a, ul.essay-list a { transition: none; }
+    }
+  </style>
 </head>
 
 <body>
-  <!-- Ambient background layers (design only) -->
   <div class="bg" aria-hidden="true">
     <div class="bgShift"></div>
     <div class="bgGrid"></div>
     <div class="bgNoise"></div>
   </div>
 
-  <!-- Cursor accent (design only) -->
   <div class="cursorDot" aria-hidden="true"></div>
   <div class="cursorRing" aria-hidden="true"></div>
 
@@ -100,25 +430,18 @@
       tick();
 
       function setActive(on) {
-        if (on) {
-          dot.classList.add("active");
-          ring.classList.add("active");
-        } else {
-          dot.classList.remove("active");
-          ring.classList.remove("active");
-        }
+        if (on) ring.classList.add("active");
+        else ring.classList.remove("active");
       }
 
       document.addEventListener("mouseover", function (e) {
         var t = e.target;
-        if (!t) return;
-        if (t.closest && t.closest("a, button")) setActive(true);
+        if (t && t.closest && t.closest("a, button")) setActive(true);
       });
 
       document.addEventListener("mouseout", function (e) {
         var t = e.target;
-        if (!t) return;
-        if (t.closest && t.closest("a, button")) setActive(false);
+        if (t && t.closest && t.closest("a, button")) setActive(false);
       });
     })();
   </script>
