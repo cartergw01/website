@@ -10,47 +10,188 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <main class="wrap">
-    <h1>Carter Wang</h1>
+  <a class="skip" href="#main">Skip to content</a>
 
-    <p class="bio">
-      Hey, I'm Carter! I grew up in Southern California, studied business at UC Santa Cruz, and am now living in Taipei working as an associate at a venture firm, 
-      <a href="https://www.886studios.com" target="_blank">886 Studios</a>, alongside the founders of Twitch and Guitar Hero. 
-      We’re building an <a href="https://www.withikigai.com" target="_blank">accelerator</a> that backs & supports early-stage startups, bringing a slice of Silicon Valley to Asia. Before that, I was a Research Fellow at Contrary Research, where I profiled and wrote about leading startups.
-    </p>
+  <header class="topbar">
+    <div class="topbarInner">
+      <a class="brand" href="#top">
+        <span class="brandDot" aria-hidden="true"></span>
+        <span class="brandName">Carter Wang</span>
+      </a>
 
-    <p class="bio">
-      Outside of work, you’ll usually find me watching the Lakers, playing poker, biking around the city, or writing in a cafe. 
-    </p>
+      <nav class="nav">
+        <a href="#about">About</a>
+        <a href="#essays">Essays</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-    <p class="bio">
-      I’m fascinated by how technology, culture, and human nature intertwine to shape progress.
-    </p>
+  <main id="main" class="wrap" tabindex="-1">
+    <section id="top" class="hero">
+      <div class="heroGrid">
+        <div class="heroLeft">
+          <div class="pills">
+            <span class="pill">Taipei</span>
+            <span class="pill">Venture</span>
+            <span class="pill">Writing</span>
+            <span class="pill">Technology + culture</span>
+          </div>
 
-    <p class="links">
-      Writing: <a href="https://carterko.substack.com" target="_blank">flying Arrows</a><br>
-      Reach me at <a href="mailto:cartergw01@gmail.com">cartergw01@gmail.com</a> · 
-      <a href="https://x.com/CarterKoWang" target="_blank">X</a> · 
-      <a href="https://www.linkedin.com/in/cartergrantwang" target="_blank">LinkedIn</a>
-    </p>
+          <h1 class="title">
+            Venture associate at 886 Studios.
+            I write about technology, culture, and human nature.
+          </h1>
 
-    <h2>Essays</h2>
-    <ul class="essay-list">
-      <li><a href="https://open.substack.com/pub/carterko/p/slop-and-spiral" target="_blank">Slop & Spiral</a></li>
-      <li><a href="https://carterko.substack.com/p/we-all-have-superpowers" target="_blank">We All Have Superpowers</a></li>
-      <li><a href="https://carterko.substack.com/p/the-mirage-of-identity" target="_blank">The Mirage of Identity</a></li>
-      <li><a href="https://carterko.substack.com/p/from-crash-to-curiosity" target="_blank">From Crash to Curiosity</a></li>
-      <li><a href="https://carterko.substack.com/p/work-as-play" target="_blank">Work as Play</a></li>
-    </ul>
+          <p class="lede">
+            I grew up in Southern California, studied business at UC Santa Cruz, and now live in Taipei working as an associate at
+            <a href="https://www.886studios.com" target="_blank" rel="noreferrer">886 Studios</a>, alongside the founders of Twitch and Guitar Hero.
+            We’re building an <a href="https://www.withikigai.com" target="_blank" rel="noreferrer">accelerator</a> that backs early stage startups, bringing a slice of Silicon Valley to Asia.
+            Before that, I was a Research Fellow at Contrary Research, where I profiled and wrote about leading startups.
+          </p>
 
-    <footer>
+          <p class="lede">
+            Outside of work, you’ll usually find me watching the Lakers, playing poker, biking around the city, or writing in a cafe.
+          </p>
+
+          <div class="ctaRow">
+            <a class="btn primary" href="https://carterko.substack.com" target="_blank" rel="noreferrer">Read Flying Arrows</a>
+            <button class="btn" id="copyEmail" type="button" data-email="cartergw01@gmail.com">Copy email</button>
+          </div>
+
+          <div class="quick">
+            <div class="quickItem">
+              <div class="quickLabel">Current focus</div>
+              <div class="quickValue">Early stage startups + ecosystem building</div>
+            </div>
+            <div class="quickItem">
+              <div class="quickLabel">Writing themes</div>
+              <div class="quickValue">Progress, attention, identity, modern culture</div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="heroRight">
+          <div class="card">
+            <div class="cardTop">
+              <div class="avatar" aria-hidden="true">CW</div>
+              <div class="cardMeta">
+                <div class="cardName">Carter Wang</div>
+                <div class="cardRole">Taipei • Venture • Writing</div>
+              </div>
+            </div>
+
+            <div class="cardLinks">
+              <a href="mailto:cartergw01@gmail.com">Email</a>
+              <a href="https://x.com/CarterKoWang" target="_blank" rel="noreferrer">X</a>
+              <a href="https://www.linkedin.com/in/cartergrantwang" target="_blank" rel="noreferrer">LinkedIn</a>
+              <a href="https://carterko.substack.com" target="_blank" rel="noreferrer">Substack</a>
+            </div>
+
+            <div class="cardNote">
+              <div class="noteTitle">Currently thinking about</div>
+              <ul class="noteList">
+                <li>How AI changes taste and ambition</li>
+                <li>Taiwan’s founder density</li>
+                <li>Attention, meaning, and modern life</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="status">
+            <span class="statusDot" aria-hidden="true"></span>
+            <div class="statusText">
+              <div class="statusTitle">Open to</div>
+              <div class="statusBody">Meeting founders and sharing notes</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <h2>About</h2>
+
+      <p class="bio">
+        I’m fascinated by how technology, culture, and human nature intertwine to shape progress.
+      </p>
+
+      <p class="links" id="contact">
+        Writing: <a href="https://carterko.substack.com" target="_blank" rel="noreferrer">Flying Arrows</a><br>
+        Reach me at <a href="mailto:cartergw01@gmail.com">cartergw01@gmail.com</a> ·
+        <a href="https://x.com/CarterKoWang" target="_blank" rel="noreferrer">X</a> ·
+        <a href="https://www.linkedin.com/in/cartergrantwang" target="_blank" rel="noreferrer">LinkedIn</a>
+      </p>
+    </section>
+
+    <section id="essays" class="section">
+      <h2>Essays</h2>
+
+      <div class="essayGrid">
+        <a class="essayCard" href="https://open.substack.com/pub/carterko/p/slop-and-spiral" target="_blank" rel="noreferrer">
+          <div class="essayTitle">Slop & Spiral</div>
+          <div class="essayDesc">Algorithmic sameness and why originality feels rare.</div>
+          <div class="essayMeta">Read →</div>
+        </a>
+
+        <a class="essayCard" href="https://carterko.substack.com/p/we-all-have-superpowers" target="_blank" rel="noreferrer">
+          <div class="essayTitle">We All Have Superpowers</div>
+          <div class="essayDesc">Technology as human amplification, not replacement.</div>
+          <div class="essayMeta">Read →</div>
+        </a>
+
+        <a class="essayCard" href="https://carterko.substack.com/p/the-mirage-of-identity" target="_blank" rel="noreferrer">
+          <div class="essayTitle">The Mirage of Identity</div>
+          <div class="essayDesc">Identity, narrative, and what we cling to.</div>
+          <div class="essayMeta">Read →</div>
+        </a>
+
+        <a class="essayCard" href="https://carterko.substack.com/p/from-crash-to-curiosity" target="_blank" rel="noreferrer">
+          <div class="essayTitle">From Crash to Curiosity</div>
+          <div class="essayDesc">How losing money pushed me into tech and venture.</div>
+          <div class="essayMeta">Read →</div>
+        </a>
+
+        <a class="essayCard" href="https://carterko.substack.com/p/work-as-play" target="_blank" rel="noreferrer">
+          <div class="essayTitle">Work as Play</div>
+          <div class="essayDesc">Motivation, obsession, and building without forcing it.</div>
+          <div class="essayMeta">Read →</div>
+        </a>
+      </div>
+    </section>
+
+    <footer class="footer">
       <small>© <span id="year"></span> Carter Wang</small>
     </footer>
   </main>
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    (function () {
+      var btn = document.getElementById("copyEmail");
+      if (!btn) return;
+
+      btn.addEventListener("click", function () {
+        var email = btn.getAttribute("data-email");
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(email);
+        } else {
+          var ta = document.createElement("textarea");
+          ta.value = email;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          document.body.removeChild(ta);
+        }
+
+        var prev = btn.textContent;
+        btn.textContent = "Copied";
+        setTimeout(function () { btn.textContent = prev; }, 900);
+      });
+    })();
   </script>
 </body>
 </html>
