@@ -1,3 +1,6 @@
+html { background: #ff00ff !important; }
+body { background: transparent !important; }
+h1 { color: #00ff66 !important; }
 :root{
   --bg0:#000000;
   --bg1:#020d1a;
