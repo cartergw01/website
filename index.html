@@ -10,16 +10,319 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <!-- Absolute path + cache buster -->
-  <link rel="stylesheet" href="/style.css?v=20260130">
+  <style>
+    :root{
+      --bg0:#000000;
+      --bg1:#02101f;
+      --bg2:#03284a;
+      --bg3:#064c86;
+
+      --text:#e5e7eb;
+      --muted:#cbd5e1;
+      --muted2:#94a3b8;
+      --footer:#64748b;
+
+      --orange:#f97316;
+
+      --stroke:rgba(255,255,255,0.10);
+      --panelTop:rgba(255,255,255,0.06);
+      --panelBot:rgba(255,255,255,0.02);
+
+      --radius:18px;
+      --shadow:0 24px 70px rgba(0,0,0,0.55);
+    }
+
+    *{ box-sizing:border-box; }
+
+    html{
+      min-height:100vh;
+      background-color:#000;
+      background-image: linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 25%, var(--bg2) 65%, var(--bg3) 100%);
+      background-repeat:no-repeat;
+      background-size:140% 140%;
+      background-attachment:fixed;
+      animation: baseDrift 26s ease-in-out infinite;
+      overscroll-behavior:contain;
+    }
+
+    @keyframes baseDrift{
+      0%{ background-position:30% 10%; }
+      50%{ background-position:70% 90%; }
+      100%{ background-position:30% 10%; }
+    }
+
+    body{
+      min-height:100vh;
+      margin:0;
+      color:var(--text);
+      font-family:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      text-align:left;
+
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+
+      padding:28px 18px 64px;
+      background:transparent;
+
+      animation: fadein 0.9s ease;
+      -webkit-text-size-adjust:100%;
+      overscroll-behavior:contain;
+    }
+
+    @keyframes fadein{
+      from{ opacity:0; }
+      to{ opacity:1; }
+    }
+
+    /* Warp canvas layer */
+    .warp{
+      position:fixed;
+      inset:0;
+      z-index:0;
+      pointer-events:none;
+    }
+
+    /* Subtle vignette and atmosphere */
+    .atmo{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(255,255,255,0.05), rgba(255,255,255,0) 55%),
+        radial-gradient(circle at 50% 65%, rgba(0,0,0,0.35), rgba(0,0,0,0.85) 70%);
+      mix-blend-mode: overlay;
+    }
+
+    /* Noise so gradients feel less flat */
+    .noise{
+      position:fixed;
+      inset:0;
+      z-index:1;
+      pointer-events:none;
+      opacity:0.08;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
+
+    /* Main container */
+    .wrap{
+      position:relative;
+      z-index:2;
+
+      width:100%;
+      max-width:720px;
+      margin:0 auto;
+
+      padding:54px 34px 40px;
+
+      background: linear-gradient(180deg, var(--panelTop) 0%, var(--panelBot) 100%);
+      border:1px solid var(--stroke);
+      border-radius:var(--radius);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+    }
+
+    h1{
+      font-size:46px;
+      font-weight:800;
+      letter-spacing:-0.035em;
+      margin:0 0 18px;
+      color:#fff;
+    }
+
+    h2{
+      font-size:20px;
+      font-weight:700;
+      margin-top:68px;
+      border-top:1px solid rgba(255,255,255,0.10);
+      padding-top:26px;
+      color:#f3f4f6;
+    }
+
+    /* One-time light sweep */
+    .nameSweep{
+      position:relative;
+      display:inline-block;
+    }
+
+    .nameSweep::after{
+      content:"";
+      position:absolute;
+      top:-20%;
+      left:-40%;
+      width:40%;
+      height:160%;
+      background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,0.40) 50%,
+        rgba(255,255,255,0) 100%
+      );
+      transform: skewX(-18deg);
+      filter: blur(1px);
+      opacity:0;
+      animation: sweep 1.25s ease-out 0.35s 1 forwards;
+      mix-blend-mode: overlay;
+      pointer-events:none;
+    }
+
+    @keyframes sweep{
+      0%{ opacity:0; transform: translateX(0) skewX(-18deg); }
+      12%{ opacity:1; }
+      100%{ opacity:0; transform: translateX(280%) skewX(-18deg); }
+    }
+
+    .bio{
+      font-size:17px;
+      color:var(--muted);
+      margin:0 0 24px;
+      line-height:1.75;
+    }
+
+    .links{
+      margin:6px 0 54px;
+      color:var(--muted2);
+      font-size:16px;
+    }
+
+    a, a:visited{
+      color:var(--orange);
+      text-decoration:none;
+      border-bottom:1px solid transparent;
+      transition: border 0.2s ease, text-shadow 0.25s ease;
+    }
+
+    a:hover{
+      border-bottom:1px solid var(--orange);
+      text-shadow:0 0 10px rgba(249,115,22,0.55);
+    }
+
+    /* Essays: chevrons always aligned */
+    ul.essay-list{
+      list-style:none;
+      padding:0;
+      margin:14px 0 0;
+    }
+
+    ul.essay-list li{
+      display:grid;
+      grid-template-columns:14px 1fr;
+      column-gap:10px;
+      align-items:baseline;
+      margin-bottom:12px;
+    }
+
+    ul.essay-list li::before{
+      content:"›";
+      color:var(--orange);
+      font-weight:600;
+      opacity:0.95;
+      line-height:1;
+    }
+
+    ul.essay-list a{
+      display:inline-block;
+      font-size:18px;
+      color:#e5e7eb;
+      padding:6px 8px;
+      margin-left:-8px;
+      border-radius:10px;
+      transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      border-bottom:1px solid transparent;
+    }
+
+    ul.essay-list a:hover{
+      border-bottom-color:transparent;
+      color:var(--orange);
+      background: rgba(249,115,22,0.08);
+      transform: translateX(4px);
+      box-shadow: 0 0 0 1px rgba(249,115,22,0.18) inset;
+    }
+
+    footer{
+      margin-top:56px;
+      color:var(--footer);
+      font-size:14px;
+      border-top:1px solid rgba(255,255,255,0.08);
+      padding-top:18px;
+    }
+
+    /* Cursor accent */
+    .cursorDot,
+    .cursorRing{
+      position:fixed;
+      top:0;
+      left:0;
+      z-index:9999;
+      pointer-events:none;
+      transform: translate(-100px, -100px);
+      opacity:0;
+      transition: opacity 180ms ease;
+    }
+
+    .cursorDot{
+      width:6px;
+      height:6px;
+      border-radius:999px;
+      background: rgba(249,115,22,0.95);
+      box-shadow: 0 0 18px rgba(249,115,22,0.35);
+      margin-left:-3px;
+      margin-top:-3px;
+    }
+
+    .cursorRing{
+      width:34px;
+      height:34px;
+      border-radius:999px;
+      border:1px solid rgba(249,115,22,0.35);
+      box-shadow: 0 0 26px rgba(249,115,22,0.10);
+      margin-left:-17px;
+      margin-top:-17px;
+      transition: width 160ms ease, height 160ms ease, margin 160ms ease, border-color 160ms ease, opacity 180ms ease;
+    }
+
+    .cursorRing.active{
+      width:48px;
+      height:48px;
+      margin-left:-24px;
+      margin-top:-24px;
+      border-color: rgba(249,115,22,0.55);
+    }
+
+    /* Mobile */
+    @media (max-width: 768px){
+      body{ padding:16px 14px 52px; }
+      .wrap{ padding:40px 18px 34px; border-radius:16px; }
+      h1{ font-size:38px; }
+      .atmo{ opacity:0.85; }
+      .noise{ opacity:0.06; }
+    }
+
+    @supports (padding:max(0px)){
+      body{ padding-top: max(10px, env(safe-area-inset-top) + 6px); }
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce){
+      html{
+        background-attachment: scroll;
+        animation:none;
+        background-size:cover;
+      }
+      .warp{ display:none; }
+      .cursorDot, .cursorRing{ display:none; }
+      a, ul.essay-list a{ transition:none; }
+      .nameSweep::after{ animation:none; opacity:0; }
+    }
+  </style>
 </head>
 
 <body>
-  <div class="bg" aria-hidden="true">
-    <div class="bgShift"></div>
-    <div class="bgGrid"></div>
-    <div class="bgNoise"></div>
-  </div>
+  <canvas class="warp" id="warp" aria-hidden="true"></canvas>
+  <div class="atmo" aria-hidden="true"></div>
+  <div class="noise" aria-hidden="true"></div>
 
   <div class="cursorDot" aria-hidden="true"></div>
   <div class="cursorRing" aria-hidden="true"></div>
@@ -69,58 +372,209 @@
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       var isTouch = ("ontouchstart" in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
-      var dot = document.querySelector(".cursorDot");
-      var ring = document.querySelector(".cursorRing");
-      if (!dot || !ring) return;
+      /* Cursor accent */
+      (function () {
+        var dot = document.querySelector(".cursorDot");
+        var ring = document.querySelector(".cursorRing");
+        if (!dot || !ring) return;
 
-      if (reduce || isTouch) {
-        dot.style.display = "none";
-        ring.style.display = "none";
-        return;
-      }
+        if (reduce || isTouch) {
+          dot.style.display = "none";
+          ring.style.display = "none";
+          return;
+        }
 
-      var x = -1000, y = -1000, rx = -1000, ry = -1000;
-      var shown = false;
+        var x = -1000, y = -1000, rx = -1000, ry = -1000;
+        var shown = false;
 
-      function show() {
-        if (shown) return;
-        shown = true;
-        dot.style.opacity = "1";
-        ring.style.opacity = "0.85";
-      }
+        function show() {
+          if (shown) return;
+          shown = true;
+          dot.style.opacity = "1";
+          ring.style.opacity = "0.85";
+        }
 
-      function onMove(e) {
-        x = e.clientX;
-        y = e.clientY;
-        if (rx < -900) { rx = x; ry = y; }
-        show();
-        dot.style.transform = "translate(" + x + "px," + y + "px)";
-      }
+        function onMove(e) {
+          x = e.clientX;
+          y = e.clientY;
+          if (rx < -900) { rx = x; ry = y; }
+          show();
+          dot.style.transform = "translate(" + x + "px," + y + "px)";
+        }
 
-      function tick() {
-        rx += (x - rx) * 0.12;
-        ry += (y - ry) * 0.12;
-        ring.style.transform = "translate(" + rx + "px," + ry + "px)";
-        requestAnimationFrame(tick);
-      }
+        function tick() {
+          rx += (x - rx) * 0.12;
+          ry += (y - ry) * 0.12;
+          ring.style.transform = "translate(" + rx + "px," + ry + "px)";
+          requestAnimationFrame(tick);
+        }
 
-      window.addEventListener("mousemove", onMove, { passive: true });
-      tick();
+        window.addEventListener("mousemove", onMove, { passive: true });
+        tick();
 
-      function setActive(on) {
-        if (on) ring.classList.add("active");
-        else ring.classList.remove("active");
-      }
+        function setActive(on) {
+          if (on) ring.classList.add("active");
+          else ring.classList.remove("active");
+        }
 
-      document.addEventListener("mouseover", function (e) {
-        var t = e.target;
-        if (t && t.closest && t.closest("a, button")) setActive(true);
-      });
+        document.addEventListener("mouseover", function (e) {
+          var t = e.target;
+          if (t && t.closest && t.closest("a, button")) setActive(true);
+        });
 
-      document.addEventListener("mouseout", function (e) {
-        var t = e.target;
-        if (t && t.closest && t.closest("a, button")) setActive(false);
-      });
+        document.addEventListener("mouseout", function (e) {
+          var t = e.target;
+          if (t && t.closest && t.closest("a, button")) setActive(false);
+        });
+      })();
+
+      /* Warp speed background (subtle) */
+      (function () {
+        var canvas = document.getElementById("warp");
+        if (!canvas) return;
+
+        if (reduce) {
+          canvas.style.display = "none";
+          return;
+        }
+
+        var ctx = canvas.getContext("2d");
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+        var w = 0, h = 0, cx = 0, cy = 0;
+        var stars = [];
+        var running = true;
+
+        /* Subtle tuning */
+        var STAR_COUNT_DESKTOP = 420;
+        var STAR_COUNT_MOBILE = 260;
+
+        function rand(min, max) {
+          return min + Math.random() * (max - min);
+        }
+
+        function resize() {
+          dpr = Math.min(window.devicePixelRatio || 1, 2);
+          w = Math.floor(window.innerWidth);
+          h = Math.floor(window.innerHeight);
+
+          canvas.width = Math.floor(w * dpr);
+          canvas.height = Math.floor(h * dpr);
+          canvas.style.width = w + "px";
+          canvas.style.height = h + "px";
+
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+          cx = w * 0.5;
+          cy = h * 0.45;
+
+          buildStars();
+        }
+
+        function buildStars() {
+          var isSmall = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+          var count = isSmall ? STAR_COUNT_MOBILE : STAR_COUNT_DESKTOP;
+
+          stars = [];
+          for (var i = 0; i < count; i++) {
+            stars.push(spawnStar(true));
+          }
+        }
+
+        function spawnStar(initial) {
+          /* Start near center with tiny radius, so motion feels forward */
+          var angle = rand(0, Math.PI * 2);
+
+          /* Slightly biased toward center at spawn */
+          var r = initial ? rand(0, Math.min(w, h) * 0.12) : rand(0, Math.min(w, h) * 0.05);
+
+          /* Speed is subtle, with variance */
+          var speed = rand(0.65, 1.25);
+
+          /* Brightness and size */
+          var alpha = rand(0.18, 0.65);
+          var size = rand(0.7, 1.8);
+
+          /* Color tint: mostly white, slight cool tint */
+          var tint = rand(0, 1);
+
+          return {
+            angle: angle,
+            r: r,
+            pr: r,
+            speed: speed,
+            alpha: alpha,
+            size: size,
+            tint: tint
+          };
+        }
+
+        function step() {
+          if (!running) return;
+
+          ctx.clearRect(0, 0, w, h);
+
+          /* Very subtle fade so trails are not harsh */
+          ctx.globalCompositeOperation = "source-over";
+
+          for (var i = 0; i < stars.length; i++) {
+            var s = stars[i];
+
+            /* Accelerate gently as it moves outward */
+            s.pr = s.r;
+            s.r += s.speed + (s.r * 0.0022);
+
+            var x1 = cx + Math.cos(s.angle) * s.pr;
+            var y1 = cy + Math.sin(s.angle) * s.pr;
+
+            var x2 = cx + Math.cos(s.angle) * s.r;
+            var y2 = cy + Math.sin(s.angle) * s.r;
+
+            /* If offscreen, respawn */
+            if (x2 < -60 || x2 > w + 60 || y2 < -60 || y2 > h + 60) {
+              stars[i] = spawnStar(false);
+              continue;
+            }
+
+            /* Subtle streak: longer as radius increases */
+            var streak = Math.min(18, 2 + (s.r * 0.03));
+
+            var dx = x2 - x1;
+            var dy = y2 - y1;
+            var len = Math.sqrt(dx*dx + dy*dy) || 1;
+
+            var sx = x2 - (dx / len) * streak;
+            var sy = y2 - (dy / len) * streak;
+
+            /* Slight color variation */
+            var rC = s.tint < 0.15 ? 200 : 255;
+            var gC = s.tint < 0.15 ? 225 : 255;
+            var bC = s.tint < 0.15 ? 255 : 255;
+
+            ctx.strokeStyle = "rgba(" + rC + "," + gC + "," + bC + "," + s.alpha + ")";
+            ctx.lineWidth = s.size;
+            ctx.lineCap = "round";
+
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+          }
+
+          requestAnimationFrame(step);
+        }
+
+        function onVis() {
+          running = !document.hidden;
+          if (running) step();
+        }
+
+        window.addEventListener("resize", resize, { passive: true });
+        document.addEventListener("visibilitychange", onVis);
+
+        resize();
+        step();
+      })();
     })();
   </script>
 </body>
