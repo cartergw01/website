@@ -12,12 +12,17 @@
   --orange:#f97316;
 
   --radius:18px;
-  --shadow:0 24px 70px rgba(0,0,0,0.55);
 
-  /* Glass panel tuning */
-  --panelTop: rgba(255,255,255,0.030);
-  --panelBot: rgba(255,255,255,0.014);
+  /* Glass tuning (more transparent) */
+  --panelTop: rgba(255,255,255,0.020);
+  --panelBot: rgba(255,255,255,0.010);
   --panelStroke: rgba(255,255,255,0.10);
+  --panelShadow: 0 24px 70px rgba(0,0,0,0.58);
+
+  /* Motion controls */
+  --bgMotion: 34s;
+  --sheenMotion: 10.5s;
+  --speedMotion: 7.5s;
 }
 
 *{ box-sizing:border-box; }
@@ -27,16 +32,16 @@ html{
   background-color:#000;
   background-image: linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 25%, var(--bg2) 65%, var(--bg3) 100%);
   background-repeat:no-repeat;
-  background-size:140% 140%;
+  background-size:150% 150%;
   background-attachment:fixed;
-  animation: baseDrift 28s ease-in-out infinite;
+  animation: baseDrift var(--bgMotion) ease-in-out infinite;
   overscroll-behavior:contain;
 }
 
 @keyframes baseDrift{
-  0%{ background-position:30% 10%; }
-  50%{ background-position:70% 90%; }
-  100%{ background-position:30% 10%; }
+  0%{ background-position:28% 12%; }
+  50%{ background-position:72% 88%; }
+  100%{ background-position:28% 12%; }
 }
 
 body{
@@ -53,42 +58,93 @@ body{
   padding:28px 18px 64px;
   background:transparent;
 
-  animation: fadein 0.9s ease;
+  animation: fadein 0.8s ease;
   -webkit-text-size-adjust:100%;
   overscroll-behavior:contain;
 }
 
 @keyframes fadein{
-  from{ opacity:0; }
-  to{ opacity:1; }
+  from{ opacity:0; transform: translateY(4px); }
+  to{ opacity:1; transform: translateY(0); }
 }
 
-/* Background depth (CSS only, no HTML changes) */
+/* =========
+   Dynamic background overlays (CSS only)
+   These make the page feel alive even if the star canvas is static.
+   ========= */
+
+/* Nebula blobs + vignette */
 body::before{
   content:"";
   position:fixed;
-  inset:0;
+  inset:-20%;
   z-index:0;
   pointer-events:none;
+
   background:
-    radial-gradient(circle at 50% 30%, rgba(255,255,255,0.05), rgba(255,255,255,0) 55%),
-    radial-gradient(circle at 50% 70%, rgba(0,0,0,0.30), rgba(0,0,0,0.86) 70%);
-  mix-blend-mode: overlay;
+    radial-gradient(900px 520px at 18% 28%, rgba(249,115,22,0.12), rgba(249,115,22,0) 60%),
+    radial-gradient(780px 460px at 78% 36%, rgba(100,200,255,0.10), rgba(100,200,255,0) 62%),
+    radial-gradient(760px 520px at 55% 78%, rgba(120,255,200,0.06), rgba(120,255,200,0) 62%),
+    radial-gradient(900px 760px at 50% 58%, rgba(0,0,0,0.22), rgba(0,0,0,0.86) 70%);
+
+  filter: blur(22px);
   opacity:0.95;
+  mix-blend-mode: screen;
+
+  animation: nebulaDrift 22s ease-in-out infinite;
 }
 
+@keyframes nebulaDrift{
+  0%{ transform: translate3d(-1.5%, -1.0%, 0) scale(1.02); }
+  50%{ transform: translate3d(1.6%, 1.2%, 0) scale(1.05); }
+  100%{ transform: translate3d(-1.5%, -1.0%, 0) scale(1.02); }
+}
+
+/* Speed lines + fine noise */
 body::after{
   content:"";
   position:fixed;
   inset:0;
   z-index:0;
   pointer-events:none;
-  opacity:0.08;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+
+  background:
+    repeating-linear-gradient(
+      110deg,
+      rgba(255,255,255,0.00) 0px,
+      rgba(255,255,255,0.00) 18px,
+      rgba(255,255,255,0.035) 19px,
+      rgba(255,255,255,0.00) 22px
+    ),
+    linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.35)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
+
+  background-size: 260% 260%, 100% 100%, 160px 160px;
+  background-position: 0% 0%, 0% 0%, 0 0;
+
+  opacity:0.16;
   mix-blend-mode: overlay;
+
+  animation: speedShift var(--speedMotion) linear infinite;
 }
 
-/* Main container */
+@keyframes speedShift{
+  0%{ background-position: 0% 0%, 0% 0%, 0 0; }
+  100%{ background-position: 180% 220%, 0% 0%, 0 0; }
+}
+
+/* If you already have a canvas with class "stars", keep it behind everything */
+.stars{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* =========
+   Main glass panel
+   ========= */
+
 .wrap{
   position:relative;
   z-index:1;
@@ -99,107 +155,110 @@ body::after{
 
   padding:54px 34px 40px;
 
-  background: linear-gradient(180deg, var(--panelTop) 0%, var(--panelBot) 100%);
-  border:1px solid var(--panelStroke);
   border-radius:var(--radius);
 
-  backdrop-filter: blur(12px) saturate(125%);
-  -webkit-backdrop-filter: blur(12px) saturate(125%);
+  /* Real glass fill */
+  background:
+    radial-gradient(600px 280px at 35% 0%, rgba(255,255,255,0.06), rgba(255,255,255,0) 55%),
+    linear-gradient(180deg, var(--panelTop) 0%, var(--panelBot) 100%);
+
+  border:1px solid var(--panelStroke);
+
+  backdrop-filter: blur(14px) saturate(135%);
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
 
   box-shadow:
-    0 24px 70px rgba(0,0,0,0.55),
-    0 0 0 1px rgba(255,255,255,0.08) inset,
-    0 0 28px rgba(249,115,22,0.08);
+    var(--panelShadow),
+    0 0 0 1px rgba(255,255,255,0.06) inset,
+    0 0 46px rgba(249,115,22,0.10);
 
-  transition: border-color 220ms ease, box-shadow 220ms ease, backdrop-filter 220ms ease;
-  animation: panelBreath 6.8s ease-in-out infinite;
+  transform: translateZ(0);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, backdrop-filter 220ms ease;
 }
 
-/* Overlay to keep glass stable */
+/* Animated border aura (makes the panel feel active even when you are not scrolling) */
 .wrap::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  pointer-events:none;
-  background:
-    radial-gradient(circle at 30% 0%, rgba(255,255,255,0.10), rgba(255,255,255,0) 55%),
-    linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.18));
-  opacity:0.45;
-}
-
-/* Panel sheen */
-.wrap::after{
   content:"";
   position:absolute;
   inset:-1px;
   border-radius:inherit;
   pointer-events:none;
+
+  background:
+    conic-gradient(
+      from 180deg,
+      rgba(249,115,22,0.00),
+      rgba(249,115,22,0.20),
+      rgba(100,200,255,0.16),
+      rgba(249,115,22,0.00),
+      rgba(255,255,255,0.08),
+      rgba(249,115,22,0.00)
+    );
+
+  opacity:0.55;
+  filter: blur(10px);
+
+  animation: auraSpin 14s linear infinite;
+}
+
+@keyframes auraSpin{
+  0%{ transform: rotate(0deg); }
+  100%{ transform: rotate(360deg); }
+}
+
+/* Sweeping sheen across the surface */
+.wrap::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+
   background: linear-gradient(
     120deg,
     rgba(255,255,255,0) 0%,
     rgba(255,255,255,0.06) 42%,
-    rgba(255,255,255,0.14) 50%,
+    rgba(255,255,255,0.16) 50%,
     rgba(255,255,255,0.06) 58%,
     rgba(255,255,255,0) 100%
   );
+
   transform: translateX(-140%) skewX(-12deg);
-  opacity:0.55;
+  opacity:0.45;
   mix-blend-mode: overlay;
-  animation: panelSheen 11s ease-in-out infinite;
+  animation: panelSheen var(--sheenMotion) ease-in-out infinite;
 }
 
-/* Keep content above overlays */
+@keyframes panelSheen{
+  0% { transform: translateX(-140%) skewX(-12deg); opacity:0.0; }
+  14% { opacity:0.45; }
+  52% { opacity:0.30; }
+  68% { transform: translateX(140%) skewX(-12deg); opacity:0.0; }
+  100% { transform: translateX(140%) skewX(-12deg); opacity:0.0; }
+}
+
 .wrap > *{
   position:relative;
   z-index:1;
 }
 
-@keyframes panelSheen{
-  0% { transform: translateX(-140%) skewX(-12deg); opacity:0.0; }
-  10% { opacity:0.55; }
-  45% { opacity:0.35; }
-  60% { transform: translateX(140%) skewX(-12deg); opacity:0.0; }
-  100% { transform: translateX(140%) skewX(-12deg); opacity:0.0; }
-}
-
-@keyframes panelBreath{
-  0%{
-    border-color: rgba(255,255,255,0.09);
-    box-shadow:
-      0 24px 70px rgba(0,0,0,0.55),
-      0 0 0 1px rgba(255,255,255,0.08) inset,
-      0 0 26px rgba(249,115,22,0.06);
-  }
-  50%{
-    border-color: rgba(255,255,255,0.13);
-    box-shadow:
-      0 24px 70px rgba(0,0,0,0.55),
-      0 0 0 1px rgba(255,255,255,0.10) inset,
-      0 0 34px rgba(249,115,22,0.10);
-  }
-  100%{
-    border-color: rgba(255,255,255,0.09);
-    box-shadow:
-      0 24px 70px rgba(0,0,0,0.55),
-      0 0 0 1px rgba(255,255,255,0.08) inset,
-      0 0 26px rgba(249,115,22,0.06);
-  }
-}
-
 @media (hover:hover){
   .wrap:hover{
-    border-color: rgba(255,255,255,0.16);
-    backdrop-filter: blur(14px) saturate(140%);
-    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.14);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
     box-shadow:
-      0 24px 70px rgba(0,0,0,0.55),
-      0 0 0 1px rgba(255,255,255,0.11) inset,
-      0 0 46px rgba(249,115,22,0.12);
+      0 28px 88px rgba(0,0,0,0.62),
+      0 0 0 1px rgba(255,255,255,0.08) inset,
+      0 0 70px rgba(249,115,22,0.14);
   }
 }
 
-/* Headings */
+/* =========
+   Typography
+   ========= */
+
 h1{
   font-size:46px;
   font-weight:800;
@@ -209,34 +268,35 @@ h1{
 
   position:relative;
   display:inline-block;
+  text-shadow: 0 10px 34px rgba(0,0,0,0.50);
 }
 
-/* One-time name sweep */
+/* Light sweep on name (one time) */
 h1::after{
   content:"";
   position:absolute;
-  top:-20%;
+  top:-22%;
   left:-40%;
-  width:40%;
-  height:160%;
+  width:42%;
+  height:170%;
   background: linear-gradient(
     90deg,
     rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.40) 50%,
+    rgba(255,255,255,0.44) 50%,
     rgba(255,255,255,0) 100%
   );
   transform: skewX(-18deg);
   filter: blur(1px);
   opacity:0;
-  animation: nameSweep 1.25s ease-out 0.35s 1 forwards;
+  animation: nameSweep 1.2s ease-out 0.35s 1 forwards;
   mix-blend-mode: overlay;
   pointer-events:none;
 }
 
 @keyframes nameSweep{
   0%{ opacity:0; transform: translateX(0) skewX(-18deg); }
-  12%{ opacity:1; }
-  100%{ opacity:0; transform: translateX(280%) skewX(-18deg); }
+  14%{ opacity:1; }
+  100%{ opacity:0; transform: translateX(290%) skewX(-18deg); }
 }
 
 h2{
@@ -248,7 +308,6 @@ h2{
   color:#f3f4f6;
 }
 
-/* Paragraphs */
 .bio{
   font-size:17px;
   color:var(--muted);
@@ -262,12 +321,15 @@ h2{
   font-size:16px;
 }
 
-/* Links */
+/* =========
+   Links
+   ========= */
+
 a, a:visited{
   color:var(--orange) !important;
   text-decoration:none;
   border-bottom:1px solid transparent;
-  transition: border 0.2s ease, text-shadow 0.25s ease;
+  transition: border 0.2s ease, text-shadow 0.25s ease, background 0.2s ease;
 }
 
 a:hover{
@@ -275,7 +337,16 @@ a:hover{
   text-shadow:0 0 10px rgba(249,115,22,0.55);
 }
 
-/* Essay list */
+a:focus-visible{
+  outline:2px solid rgba(249,115,22,0.55);
+  outline-offset:3px;
+  border-bottom-color:transparent;
+}
+
+/* =========
+   Essay list
+   ========= */
+
 ul.essay-list{
   list-style:none;
   padding:0;
@@ -305,8 +376,9 @@ ul.essay-list a{
   padding:6px 8px;
   margin-left:-8px;
   border-radius:10px;
-  transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
   border-bottom:1px solid transparent;
+
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 
 ul.essay-list a:hover{
@@ -317,7 +389,10 @@ ul.essay-list a:hover{
   box-shadow: 0 0 0 1px rgba(249,115,22,0.18) inset;
 }
 
-/* Footer */
+/* =========
+   Footer
+   ========= */
+
 footer{
   margin-top:56px;
   color:var(--footer);
@@ -326,29 +401,35 @@ footer{
   padding-top:18px;
 }
 
-/* Mobile */
+/* =========
+   Mobile and safe area
+   ========= */
+
 @media (max-width: 768px){
   body{ padding:16px 14px 52px; }
   .wrap{ padding:40px 18px 34px; border-radius:16px; }
   h1{ font-size:38px; }
-  body::before{ opacity:0.90; }
-  body::after{ opacity:0.06; }
+  body::after{ opacity:0.13; }
 }
 
-/* Safe area */
 @supports (padding:max(0px)){
   body{ padding-top: max(10px, env(safe-area-inset-top) + 6px); }
 }
 
-/* Reduced motion */
+/* =========
+   Reduced motion
+   ========= */
+
 @media (prefers-reduced-motion: reduce){
   html{
     background-attachment: scroll;
     animation:none;
     background-size:cover;
   }
+  body::before{ animation:none; }
+  body::after{ animation:none; }
+  .wrap::before{ animation:none; opacity:0.25; }
+  .wrap::after{ animation:none; opacity:0.0; }
+  h1::after{ animation:none; opacity:0.0; }
   a, ul.essay-list a{ transition:none; }
-  h1::after{ animation:none; opacity:0; }
-  .wrap{ animation:none; }
-  .wrap::after{ animation:none; opacity:0; }
 }
