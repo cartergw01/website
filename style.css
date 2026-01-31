@@ -1,8 +1,8 @@
 :root{
   --bg0:#000000;
-  --bg1:#02101f;
-  --bg2:#03284a;
-  --bg3:#064c86;
+  --bg1:#020d1a;
+  --bg2:#031f3b;
+  --bg3:#053e70;
 
   --text:#e5e7eb;
   --muted:#cbd5e1;
@@ -13,16 +13,18 @@
 
   --radius:18px;
 
-  /* Glass tuning (more transparent) */
-  --panelTop: rgba(255,255,255,0.020);
+  /* panel transparency */
+  --panelTop: rgba(255,255,255,0.018);
   --panelBot: rgba(255,255,255,0.010);
   --panelStroke: rgba(255,255,255,0.10);
-  --panelShadow: 0 24px 70px rgba(0,0,0,0.58);
+  --panelShadow: 0 28px 90px rgba(0,0,0,0.62);
 
-  /* Motion controls */
-  --bgMotion: 34s;
-  --sheenMotion: 10.5s;
-  --speedMotion: 7.5s;
+  /* motion */
+  --bgMotion: 26s;
+  --nebulaMotion: 18s;
+  --speedMotion: 4.8s;
+  --auraMotion: 12s;
+  --sheenMotion: 9.5s;
 }
 
 *{ box-sizing:border-box; }
@@ -30,18 +32,18 @@
 html{
   min-height:100vh;
   background-color:#000;
-  background-image: linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 25%, var(--bg2) 65%, var(--bg3) 100%);
+  background-image: linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 26%, var(--bg2) 66%, var(--bg3) 100%);
   background-repeat:no-repeat;
-  background-size:150% 150%;
+  background-size:160% 160%;
   background-attachment:fixed;
   animation: baseDrift var(--bgMotion) ease-in-out infinite;
   overscroll-behavior:contain;
 }
 
 @keyframes baseDrift{
-  0%{ background-position:28% 12%; }
-  50%{ background-position:72% 88%; }
-  100%{ background-position:28% 12%; }
+  0%{ background-position:26% 14%; }
+  50%{ background-position:74% 86%; }
+  100%{ background-position:26% 14%; }
 }
 
 body{
@@ -64,43 +66,50 @@ body{
 }
 
 @keyframes fadein{
-  from{ opacity:0; transform: translateY(4px); }
+  from{ opacity:0; transform: translateY(6px); }
   to{ opacity:1; transform: translateY(0); }
 }
 
+/* If you have a canvas with class "stars", keep it behind */
+.stars{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
 /* =========
-   Dynamic background overlays (CSS only)
-   These make the page feel alive even if the star canvas is static.
+   Big visible background dynamism (CSS only)
    ========= */
 
-/* Nebula blobs + vignette */
+/* Nebula blobs that drift */
 body::before{
   content:"";
   position:fixed;
-  inset:-20%;
+  inset:-25%;
   z-index:0;
   pointer-events:none;
 
   background:
-    radial-gradient(900px 520px at 18% 28%, rgba(249,115,22,0.12), rgba(249,115,22,0) 60%),
-    radial-gradient(780px 460px at 78% 36%, rgba(100,200,255,0.10), rgba(100,200,255,0) 62%),
-    radial-gradient(760px 520px at 55% 78%, rgba(120,255,200,0.06), rgba(120,255,200,0) 62%),
-    radial-gradient(900px 760px at 50% 58%, rgba(0,0,0,0.22), rgba(0,0,0,0.86) 70%);
+    radial-gradient(900px 540px at 18% 26%, rgba(249,115,22,0.18), rgba(249,115,22,0) 62%),
+    radial-gradient(820px 520px at 82% 34%, rgba(120,220,255,0.14), rgba(120,220,255,0) 66%),
+    radial-gradient(860px 600px at 55% 82%, rgba(110,255,210,0.08), rgba(110,255,210,0) 64%),
+    radial-gradient(1200px 900px at 50% 55%, rgba(0,0,0,0.18), rgba(0,0,0,0.86) 72%);
 
-  filter: blur(22px);
+  filter: blur(26px);
   opacity:0.95;
   mix-blend-mode: screen;
 
-  animation: nebulaDrift 22s ease-in-out infinite;
+  animation: nebulaDrift var(--nebulaMotion) ease-in-out infinite;
 }
 
 @keyframes nebulaDrift{
-  0%{ transform: translate3d(-1.5%, -1.0%, 0) scale(1.02); }
-  50%{ transform: translate3d(1.6%, 1.2%, 0) scale(1.05); }
-  100%{ transform: translate3d(-1.5%, -1.0%, 0) scale(1.02); }
+  0%{ transform: translate3d(-1.8%, -1.2%, 0) scale(1.02); }
+  50%{ transform: translate3d(1.9%, 1.4%, 0) scale(1.06); }
+  100%{ transform: translate3d(-1.8%, -1.2%, 0) scale(1.02); }
 }
 
-/* Speed lines + fine noise */
+/* Speed lines, more obvious */
 body::after{
   content:"";
   position:fixed;
@@ -112,17 +121,15 @@ body::after{
     repeating-linear-gradient(
       110deg,
       rgba(255,255,255,0.00) 0px,
-      rgba(255,255,255,0.00) 18px,
-      rgba(255,255,255,0.035) 19px,
-      rgba(255,255,255,0.00) 22px
+      rgba(255,255,255,0.00) 14px,
+      rgba(255,255,255,0.06) 15px,
+      rgba(255,255,255,0.00) 18px
     ),
-    linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.35)),
+    linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.40)),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.45'/%3E%3C/svg%3E");
 
-  background-size: 260% 260%, 100% 100%, 160px 160px;
-  background-position: 0% 0%, 0% 0%, 0 0;
-
-  opacity:0.16;
+  background-size: 300% 300%, 100% 100%, 160px 160px;
+  opacity:0.20;
   mix-blend-mode: overlay;
 
   animation: speedShift var(--speedMotion) linear infinite;
@@ -130,19 +137,11 @@ body::after{
 
 @keyframes speedShift{
   0%{ background-position: 0% 0%, 0% 0%, 0 0; }
-  100%{ background-position: 180% 220%, 0% 0%, 0 0; }
-}
-
-/* If you already have a canvas with class "stars", keep it behind everything */
-.stars{
-  position:fixed;
-  inset:0;
-  z-index:0;
-  pointer-events:none;
+  100%{ background-position: 220% 260%, 0% 0%, 0 0; }
 }
 
 /* =========
-   Main glass panel
+   Glass panel with real dynamism
    ========= */
 
 .wrap{
@@ -154,33 +153,31 @@ body::after{
   margin:0 auto;
 
   padding:54px 34px 40px;
-
   border-radius:var(--radius);
 
-  /* Real glass fill */
   background:
-    radial-gradient(600px 280px at 35% 0%, rgba(255,255,255,0.06), rgba(255,255,255,0) 55%),
+    radial-gradient(700px 320px at 35% 0%, rgba(255,255,255,0.07), rgba(255,255,255,0) 58%),
     linear-gradient(180deg, var(--panelTop) 0%, var(--panelBot) 100%);
 
   border:1px solid var(--panelStroke);
 
-  backdrop-filter: blur(14px) saturate(135%);
-  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  backdrop-filter: blur(16px) saturate(145%);
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
 
   box-shadow:
     var(--panelShadow),
     0 0 0 1px rgba(255,255,255,0.06) inset,
-    0 0 46px rgba(249,115,22,0.10);
+    0 0 80px rgba(249,115,22,0.10);
 
   transform: translateZ(0);
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease, backdrop-filter 220ms ease;
 }
 
-/* Animated border aura (makes the panel feel active even when you are not scrolling) */
+/* Animated aura border */
 .wrap::before{
   content:"";
   position:absolute;
-  inset:-1px;
+  inset:-2px;
   border-radius:inherit;
   pointer-events:none;
 
@@ -188,17 +185,15 @@ body::after{
     conic-gradient(
       from 180deg,
       rgba(249,115,22,0.00),
-      rgba(249,115,22,0.20),
-      rgba(100,200,255,0.16),
-      rgba(249,115,22,0.00),
-      rgba(255,255,255,0.08),
+      rgba(249,115,22,0.28),
+      rgba(120,220,255,0.18),
+      rgba(255,255,255,0.10),
       rgba(249,115,22,0.00)
     );
 
-  opacity:0.55;
-  filter: blur(10px);
-
-  animation: auraSpin 14s linear infinite;
+  opacity:0.72;
+  filter: blur(12px);
+  animation: auraSpin var(--auraMotion) linear infinite;
 }
 
 @keyframes auraSpin{
@@ -206,7 +201,7 @@ body::after{
   100%{ transform: rotate(360deg); }
 }
 
-/* Sweeping sheen across the surface */
+/* Panel sheen */
 .wrap::after{
   content:"";
   position:absolute;
@@ -217,23 +212,23 @@ body::after{
   background: linear-gradient(
     120deg,
     rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.06) 42%,
-    rgba(255,255,255,0.16) 50%,
-    rgba(255,255,255,0.06) 58%,
+    rgba(255,255,255,0.07) 40%,
+    rgba(255,255,255,0.18) 50%,
+    rgba(255,255,255,0.07) 60%,
     rgba(255,255,255,0) 100%
   );
 
   transform: translateX(-140%) skewX(-12deg);
-  opacity:0.45;
+  opacity:0.40;
   mix-blend-mode: overlay;
   animation: panelSheen var(--sheenMotion) ease-in-out infinite;
 }
 
 @keyframes panelSheen{
   0% { transform: translateX(-140%) skewX(-12deg); opacity:0.0; }
-  14% { opacity:0.45; }
-  52% { opacity:0.30; }
-  68% { transform: translateX(140%) skewX(-12deg); opacity:0.0; }
+  16% { opacity:0.40; }
+  55% { opacity:0.28; }
+  70% { transform: translateX(140%) skewX(-12deg); opacity:0.0; }
   100% { transform: translateX(140%) skewX(-12deg); opacity:0.0; }
 }
 
@@ -244,19 +239,19 @@ body::after{
 
 @media (hover:hover){
   .wrap:hover{
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     border-color: rgba(255,255,255,0.14);
-    backdrop-filter: blur(16px) saturate(150%);
-    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(155%);
+    -webkit-backdrop-filter: blur(18px) saturate(155%);
     box-shadow:
-      0 28px 88px rgba(0,0,0,0.62),
-      0 0 0 1px rgba(255,255,255,0.08) inset,
-      0 0 70px rgba(249,115,22,0.14);
+      0 34px 110px rgba(0,0,0,0.66),
+      0 0 0 1px rgba(255,255,255,0.07) inset,
+      0 0 110px rgba(249,115,22,0.14);
   }
 }
 
 /* =========
-   Typography
+   Typography and content styling
    ========= */
 
 h1{
@@ -265,13 +260,12 @@ h1{
   letter-spacing:-0.035em;
   margin:0 0 18px;
   color:#fff;
-
   position:relative;
   display:inline-block;
-  text-shadow: 0 10px 34px rgba(0,0,0,0.50);
+  text-shadow: 0 12px 44px rgba(0,0,0,0.55);
 }
 
-/* Light sweep on name (one time) */
+/* One time sweep on name */
 h1::after{
   content:"";
   position:absolute;
@@ -321,20 +315,17 @@ h2{
   font-size:16px;
 }
 
-/* =========
-   Links
-   ========= */
-
+/* Links */
 a, a:visited{
   color:var(--orange) !important;
   text-decoration:none;
   border-bottom:1px solid transparent;
-  transition: border 0.2s ease, text-shadow 0.25s ease, background 0.2s ease;
+  transition: border 0.2s ease, text-shadow 0.25s ease, background 0.2s ease, transform 0.2s ease;
 }
 
 a:hover{
   border-bottom:1px solid var(--orange);
-  text-shadow:0 0 10px rgba(249,115,22,0.55);
+  text-shadow:0 0 12px rgba(249,115,22,0.60);
 }
 
 a:focus-visible{
@@ -343,10 +334,7 @@ a:focus-visible{
   border-bottom-color:transparent;
 }
 
-/* =========
-   Essay list
-   ========= */
-
+/* Essay list */
 ul.essay-list{
   list-style:none;
   padding:0;
@@ -377,22 +365,17 @@ ul.essay-list a{
   margin-left:-8px;
   border-radius:10px;
   border-bottom:1px solid transparent;
-
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, color 0.18s ease;
 }
 
 ul.essay-list a:hover{
   border-bottom-color:transparent;
   color:var(--orange);
-  background: rgba(249,115,22,0.08);
+  background: rgba(249,115,22,0.09);
   transform: translateX(4px);
   box-shadow: 0 0 0 1px rgba(249,115,22,0.18) inset;
 }
 
-/* =========
-   Footer
-   ========= */
-
+/* Footer */
 footer{
   margin-top:56px;
   color:var(--footer);
@@ -401,25 +384,20 @@ footer{
   padding-top:18px;
 }
 
-/* =========
-   Mobile and safe area
-   ========= */
-
+/* Mobile */
 @media (max-width: 768px){
   body{ padding:16px 14px 52px; }
   .wrap{ padding:40px 18px 34px; border-radius:16px; }
   h1{ font-size:38px; }
-  body::after{ opacity:0.13; }
+  body::after{ opacity:0.18; }
 }
 
+/* Safe area */
 @supports (padding:max(0px)){
   body{ padding-top: max(10px, env(safe-area-inset-top) + 6px); }
 }
 
-/* =========
-   Reduced motion
-   ========= */
-
+/* Reduced motion */
 @media (prefers-reduced-motion: reduce){
   html{
     background-attachment: scroll;
@@ -428,7 +406,7 @@ footer{
   }
   body::before{ animation:none; }
   body::after{ animation:none; }
-  .wrap::before{ animation:none; opacity:0.25; }
+  .wrap::before{ animation:none; }
   .wrap::after{ animation:none; opacity:0.0; }
   h1::after{ animation:none; opacity:0.0; }
   a, ul.essay-list a{ transition:none; }
