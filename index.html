@@ -41,7 +41,7 @@
       background-repeat:no-repeat;
       background-size:140% 140%;
       background-attachment:fixed;
-      animation: baseDrift 26s ease-in-out infinite;
+      animation: baseDrift 28s ease-in-out infinite;
       overscroll-behavior:contain;
     }
 
@@ -75,27 +75,28 @@
       to{ opacity:1; }
     }
 
-    /* Warp canvas layer */
-    .warp{
+    /* Starfield canvas */
+    .stars{
       position:fixed;
       inset:0;
       z-index:0;
       pointer-events:none;
     }
 
-    /* Subtle vignette and atmosphere */
+    /* Atmosphere and vignette */
     .atmo{
       position:fixed;
       inset:0;
       z-index:1;
       pointer-events:none;
       background:
-        radial-gradient(circle at 50% 35%, rgba(255,255,255,0.05), rgba(255,255,255,0) 55%),
-        radial-gradient(circle at 50% 65%, rgba(0,0,0,0.35), rgba(0,0,0,0.85) 70%);
+        radial-gradient(circle at 50% 30%, rgba(255,255,255,0.05), rgba(255,255,255,0) 55%),
+        radial-gradient(circle at 50% 70%, rgba(0,0,0,0.30), rgba(0,0,0,0.86) 70%);
       mix-blend-mode: overlay;
+      opacity: 0.95;
     }
 
-    /* Noise so gradients feel less flat */
+    /* Noise */
     .noise{
       position:fixed;
       inset:0;
@@ -141,7 +142,7 @@
       color:#f3f4f6;
     }
 
-    /* One-time light sweep */
+    /* One time light sweep */
     .nameSweep{
       position:relative;
       display:inline-block;
@@ -199,7 +200,7 @@
       text-shadow:0 0 10px rgba(249,115,22,0.55);
     }
 
-    /* Essays: chevrons always aligned */
+    /* Essays: aligned chevrons */
     ul.essay-list{
       list-style:none;
       padding:0;
@@ -291,12 +292,11 @@
       border-color: rgba(249,115,22,0.55);
     }
 
-    /* Mobile */
     @media (max-width: 768px){
       body{ padding:16px 14px 52px; }
       .wrap{ padding:40px 18px 34px; border-radius:16px; }
       h1{ font-size:38px; }
-      .atmo{ opacity:0.85; }
+      .atmo{ opacity:0.90; }
       .noise{ opacity:0.06; }
     }
 
@@ -304,14 +304,13 @@
       body{ padding-top: max(10px, env(safe-area-inset-top) + 6px); }
     }
 
-    /* Reduced motion */
     @media (prefers-reduced-motion: reduce){
       html{
         background-attachment: scroll;
         animation:none;
         background-size:cover;
       }
-      .warp{ display:none; }
+      .stars{ display:none; }
       .cursorDot, .cursorRing{ display:none; }
       a, ul.essay-list a{ transition:none; }
       .nameSweep::after{ animation:none; opacity:0; }
@@ -320,7 +319,7 @@
 </head>
 
 <body>
-  <canvas class="warp" id="warp" aria-hidden="true"></canvas>
+  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
   <div class="atmo" aria-hidden="true"></div>
   <div class="noise" aria-hidden="true"></div>
 
@@ -428,32 +427,23 @@
         });
       })();
 
-      /* Warp speed background (subtle) */
+      /* Starfield drift */
       (function () {
-        var canvas = document.getElementById("warp");
+        var canvas = document.getElementById("stars");
         if (!canvas) return;
-
-        if (reduce) {
-          canvas.style.display = "none";
-          return;
-        }
+        if (reduce) { canvas.style.display = "none"; return; }
 
         var ctx = canvas.getContext("2d");
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
-        var w = 0, h = 0, cx = 0, cy = 0;
+        var w = 0, h = 0;
         var stars = [];
+        var shooters = [];
         var running = true;
 
-        /* Subtle tuning */
-        var STAR_COUNT_DESKTOP = 420;
-        var STAR_COUNT_MOBILE = 260;
+        function rand(min, max){ return min + Math.random() * (max - min); }
 
-        function rand(min, max) {
-          return min + Math.random() * (max - min);
-        }
-
-        function resize() {
+        function resize(){
           dpr = Math.min(window.devicePixelRatio || 1, 2);
           w = Math.floor(window.innerWidth);
           h = Math.floor(window.innerHeight);
@@ -465,106 +455,117 @@
 
           ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-          cx = w * 0.5;
-          cy = h * 0.45;
-
           buildStars();
         }
 
-        function buildStars() {
+        function buildStars(){
           var isSmall = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
-          var count = isSmall ? STAR_COUNT_MOBILE : STAR_COUNT_DESKTOP;
+          var count = isSmall ? 220 : 420;
 
           stars = [];
-          for (var i = 0; i < count; i++) {
-            stars.push(spawnStar(true));
+          for (var i = 0; i < count; i++){
+            stars.push({
+              x: rand(0, w),
+              y: rand(0, h),
+              r: rand(0.6, 1.8),
+              a: rand(0.15, 0.70),
+              s: rand(0.18, 0.65)   /* speed */
+            });
           }
         }
 
-        function spawnStar(initial) {
-          /* Start near center with tiny radius, so motion feels forward */
-          var angle = rand(0, Math.PI * 2);
-
-          /* Slightly biased toward center at spawn */
-          var r = initial ? rand(0, Math.min(w, h) * 0.12) : rand(0, Math.min(w, h) * 0.05);
-
-          /* Speed is subtle, with variance */
-          var speed = rand(0.65, 1.25);
-
-          /* Brightness and size */
-          var alpha = rand(0.18, 0.65);
-          var size = rand(0.7, 1.8);
-
-          /* Color tint: mostly white, slight cool tint */
-          var tint = rand(0, 1);
-
-          return {
-            angle: angle,
-            r: r,
-            pr: r,
-            speed: speed,
-            alpha: alpha,
-            size: size,
-            tint: tint
-          };
+        /* Drifts down and slightly right */
+        function drift(){
+          return { vx: 0.14, vy: 0.42 };
         }
 
-        function step() {
+        function maybeSpawnShooter(){
+          /* Very occasional */
+          if (shooters.length > 1) return;
+          if (Math.random() > 0.006) return;
+
+          var startX = rand(-w * 0.2, w * 0.8);
+          var startY = rand(-h * 0.2, h * 0.3);
+
+          var angle = rand(Math.PI * 1.15, Math.PI * 1.28); /* down-left-ish */
+          var speed = rand(14, 20);
+          var life = rand(18, 26);
+
+          shooters.push({
+            x: startX,
+            y: startY,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: life,
+            max: life
+          });
+        }
+
+        function step(){
           if (!running) return;
 
           ctx.clearRect(0, 0, w, h);
 
-          /* Very subtle fade so trails are not harsh */
-          ctx.globalCompositeOperation = "source-over";
+          var d = drift();
 
-          for (var i = 0; i < stars.length; i++) {
+          /* Stars */
+          for (var i = 0; i < stars.length; i++){
             var s = stars[i];
 
-            /* Accelerate gently as it moves outward */
-            s.pr = s.r;
-            s.r += s.speed + (s.r * 0.0022);
+            s.x += d.vx * s.s * 3.2;
+            s.y += d.vy * s.s * 3.2;
 
-            var x1 = cx + Math.cos(s.angle) * s.pr;
-            var y1 = cy + Math.sin(s.angle) * s.pr;
+            if (s.x > w + 10) s.x = -10;
+            if (s.y > h + 10) s.y = -10;
 
-            var x2 = cx + Math.cos(s.angle) * s.r;
-            var y2 = cy + Math.sin(s.angle) * s.r;
-
-            /* If offscreen, respawn */
-            if (x2 < -60 || x2 > w + 60 || y2 < -60 || y2 > h + 60) {
-              stars[i] = spawnStar(false);
-              continue;
-            }
-
-            /* Subtle streak: longer as radius increases */
-            var streak = Math.min(18, 2 + (s.r * 0.03));
-
-            var dx = x2 - x1;
-            var dy = y2 - y1;
-            var len = Math.sqrt(dx*dx + dy*dy) || 1;
-
-            var sx = x2 - (dx / len) * streak;
-            var sy = y2 - (dy / len) * streak;
-
-            /* Slight color variation */
-            var rC = s.tint < 0.15 ? 200 : 255;
-            var gC = s.tint < 0.15 ? 225 : 255;
-            var bC = s.tint < 0.15 ? 255 : 255;
-
-            ctx.strokeStyle = "rgba(" + rC + "," + gC + "," + bC + "," + s.alpha + ")";
-            ctx.lineWidth = s.size;
-            ctx.lineCap = "round";
-
+            ctx.fillStyle = "rgba(255,255,255," + s.a + ")";
             ctx.beginPath();
-            ctx.moveTo(sx, sy);
-            ctx.lineTo(x2, y2);
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          /* Shooting stars */
+          maybeSpawnShooter();
+          for (var j = shooters.length - 1; j >= 0; j--){
+            var sh = shooters[j];
+            var px = sh.x;
+            var py = sh.y;
+
+            sh.x += sh.vx;
+            sh.y += sh.vy;
+            sh.life -= 1;
+
+            var t = Math.max(0, sh.life / sh.max);
+            var tail = 160 * (1 - t) + 60;
+
+            var dx = sh.vx;
+            var dy = sh.vy;
+            var len = Math.sqrt(dx*dx + dy*dy) || 1;
+            var tx = (dx / len) * tail;
+            var ty = (dy / len) * tail;
+
+            var grad = ctx.createLinearGradient(sh.x, sh.y, sh.x - tx, sh.y - ty);
+            grad.addColorStop(0, "rgba(255,255,255," + (0.75 * t) + ")");
+            grad.addColorStop(0.4, "rgba(255,255,255," + (0.22 * t) + ")");
+            grad.addColorStop(1, "rgba(255,255,255,0)");
+
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 2;
+            ctx.lineCap = "round";
+            ctx.beginPath();
+            ctx.moveTo(sh.x, sh.y);
+            ctx.lineTo(sh.x - tx, sh.y - ty);
             ctx.stroke();
+
+            if (sh.life <= 0 || sh.x < -300 || sh.y > h + 300){
+              shooters.splice(j, 1);
+            }
           }
 
           requestAnimationFrame(step);
         }
 
-        function onVis() {
+        function onVis(){
           running = !document.hidden;
           if (running) step();
         }
