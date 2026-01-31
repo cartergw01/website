@@ -10,220 +10,167 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <!-- Cache-bust the CSS so you actually see updates -->
-  <link rel="stylesheet" href="style.css?v=7">
+  <!-- cache bust so you see changes immediately -->
+  <link rel="stylesheet" href="style.css?v=41">
 </head>
 
 <body>
-  <!-- If you later add a JS starfield, this canvas will be used.
-       If you do not have JS, it will simply do nothing and not break anything. -->
-  <canvas class="stars" id="stars" aria-hidden="true"></canvas>
+  <canvas class="fx-canvas" id="fx" aria-hidden="true"></canvas>
+  <div class="cursor-glow" id="glow" aria-hidden="true"></div>
 
   <main class="wrap">
-    <h1>Carter Wang</h1>
+    <section class="panel">
+      <h1 class="name">Carter Wang</h1>
 
-    <p class="bio">
-      Hey, I'm Carter! I grew up in Southern California, studied business at UC Santa Cruz, and am now living in Taipei working as an associate at a venture firm,
-      <a href="https://www.886studios.com" target="_blank" rel="noreferrer">886 Studios</a>, alongside the founders of Twitch and Guitar Hero.
-      We’re building an <a href="https://www.withikigai.com" target="_blank" rel="noreferrer">accelerator</a> that backs & supports early-stage startups, bringing a slice of Silicon Valley to Asia. Before that, I was a Research Fellow at Contrary Research, where I profiled and wrote about leading startups.
-    </p>
+      <p class="bio">
+        Hey, I'm Carter! I grew up in Southern California, studied business at UC Santa Cruz, and am now living in Taipei working as an associate at a venture firm,
+        <a href="https://www.886studios.com" target="_blank" rel="noreferrer">886 Studios</a>, alongside the founders of Twitch and Guitar Hero.
+        We’re building an <a href="https://www.withikigai.com" target="_blank" rel="noreferrer">accelerator</a> that backs & supports early-stage startups, bringing a slice of Silicon Valley to Asia. Before that, I was a Research Fellow at Contrary Research, where I profiled and wrote about leading startups.
+      </p>
 
-    <p class="bio">
-      Outside of work, you’ll usually find me watching the Lakers, playing poker, biking around the city, or writing in a cafe.
-    </p>
+      <p class="bio">
+        Outside of work, you’ll usually find me watching the Lakers, playing poker, biking around the city, or writing in a cafe.
+      </p>
 
-    <p class="bio">
-      I’m fascinated by how technology, culture, and human nature intertwine to shape progress.
-    </p>
+      <p class="bio">
+        I’m fascinated by how technology, culture, and human nature intertwine to shape progress.
+      </p>
 
-    <p class="links">
-      Writing: <a href="https://carterko.substack.com" target="_blank" rel="noreferrer">flying Arrows</a><br>
-      Reach me at <a href="mailto:cartergw01@gmail.com">cartergw01@gmail.com</a> ·
-      <a href="https://x.com/CarterKoWang" target="_blank" rel="noreferrer">X</a> ·
-      <a href="https://www.linkedin.com/in/cartergrantwang" target="_blank" rel="noreferrer">LinkedIn</a>
-    </p>
+      <p class="links">
+        Writing: <a href="https://carterko.substack.com" target="_blank" rel="noreferrer">flying Arrows</a><br>
+        Reach me at <a href="mailto:cartergw01@gmail.com">cartergw01@gmail.com</a> ·
+        <a href="https://x.com/CarterKoWang" target="_blank" rel="noreferrer">X</a> ·
+        <a href="https://www.linkedin.com/in/cartergrantwang" target="_blank" rel="noreferrer">LinkedIn</a>
+      </p>
 
-    <h2>Essays</h2>
-    <ul class="essay-list">
-      <li><a href="https://open.substack.com/pub/carterko/p/slop-and-spiral" target="_blank" rel="noreferrer">Slop & Spiral</a></li>
-      <li><a href="https://carterko.substack.com/p/we-all-have-superpowers" target="_blank" rel="noreferrer">We All Have Superpowers</a></li>
-      <li><a href="https://carterko.substack.com/p/the-mirage-of-identity" target="_blank" rel="noreferrer">The Mirage of Identity</a></li>
-      <li><a href="https://carterko.substack.com/p/from-crash-to-curiosity" target="_blank" rel="noreferrer">From Crash to Curiosity</a></li>
-      <li><a href="https://carterko.substack.com/p/work-as-play" target="_blank" rel="noreferrer">Work as Play</a></li>
-    </ul>
+      <h2>Essays</h2>
+      <ul class="essay-list">
+        <li><a href="https://open.substack.com/pub/carterko/p/slop-and-spiral" target="_blank" rel="noreferrer">Slop & Spiral</a></li>
+        <li><a href="https://carterko.substack.com/p/we-all-have-superpowers" target="_blank" rel="noreferrer">We All Have Superpowers</a></li>
+        <li><a href="https://carterko.substack.com/p/the-mirage-of-identity" target="_blank" rel="noreferrer">The Mirage of Identity</a></li>
+        <li><a href="https://carterko.substack.com/p/from-crash-to-curiosity" target="_blank" rel="noreferrer">From Crash to Curiosity</a></li>
+        <li><a href="https://carterko.substack.com/p/work-as-play" target="_blank" rel="noreferrer">Work as Play</a></li>
+      </ul>
 
-    <footer>
-      <small>© <span id="year"></span> Carter Wang</small>
-    </footer>
+      <footer>
+        <small>© <span id="year"></span> Carter Wang</small>
+      </footer>
+    </section>
   </main>
 
   <script>
     document.getElementById("year").textContent = new Date().getFullYear();
   </script>
 
-  <!-- Optional: if you want the star canvas to actually animate, paste the JS below.
-       If you do not want it, delete this entire script block. -->
   <script>
     (function () {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduce) return;
+      var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+      var small = window.matchMedia && window.matchMedia("(max-width: 900px)").matches;
 
-      var canvas = document.getElementById("stars");
-      if (!canvas) return;
+      // Cursor glow is allowed on desktop only
+      var glow = document.getElementById("glow");
+      if (!reduce && !coarse && glow) {
+        var gx = 0, gy = 0, tx = 0, ty = 0;
+        window.addEventListener("mousemove", function (e) {
+          tx = e.clientX;
+          ty = e.clientY;
+        }, { passive: true });
 
-      var ctx = canvas.getContext("2d");
+        function glide() {
+          gx += (tx - gx) * 0.14;
+          gy += (ty - gy) * 0.14;
+          glow.style.transform = "translate3d(" + (gx - 140) + "px," + (gy - 140) + "px,0)";
+          requestAnimationFrame(glide);
+        }
+        glide();
+      } else if (glow) {
+        glow.style.display = "none";
+      }
+
+      // Fast subtle motion background (desktop only)
+      if (reduce || small) return;
+
+      var c = document.getElementById("fx");
+      if (!c) return;
+      var ctx = c.getContext("2d", { alpha: true });
       var dpr = Math.min(window.devicePixelRatio || 1, 2);
-
       var w = 0, h = 0;
-      var stars = [];
-      var shooters = [];
-      var running = true;
 
-      var driftBoost = 1;
-      var px = 0, py = 0;
-
-      function rand(min, max){ return min + Math.random() * (max - min); }
-
-      function resize(){
-        dpr = Math.min(window.devicePixelRatio || 1, 2);
+      function resize() {
         w = Math.floor(window.innerWidth);
         h = Math.floor(window.innerHeight);
-
-        canvas.width = Math.floor(w * dpr);
-        canvas.height = Math.floor(h * dpr);
-        canvas.style.width = w + "px";
-        canvas.style.height = h + "px";
-
+        c.width = Math.floor(w * dpr);
+        c.height = Math.floor(h * dpr);
+        c.style.width = w + "px";
+        c.style.height = h + "px";
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-        buildStars();
       }
 
-      function buildStars(){
-        var isSmall = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
-        var count = isSmall ? 220 : 420;
+      var streaks = [];
+      var maxStreaks = 36;
 
-        stars = [];
-        for (var i = 0; i < count; i++){
-          stars.push({
-            x: rand(0, w),
-            y: rand(0, h),
-            r: rand(0.6, 1.8),
-            a: rand(0.14, 0.68),
-            s: rand(0.18, 0.65)
-          });
-        }
-      }
+      function spawn() {
+        if (streaks.length >= maxStreaks) return;
 
-      function drift(){
-        return { vx: 0.14 * driftBoost, vy: 0.42 * driftBoost };
-      }
+        // spawn from upper left quadrant for a "forward" feel
+        var x = Math.random() * w * 0.9 - w * 0.15;
+        var y = Math.random() * h * 0.7 - h * 0.15;
 
-      var lastScrollY = window.scrollY || 0;
-      window.addEventListener("scroll", function(){
-        var y = window.scrollY || 0;
-        var dy = Math.abs(y - lastScrollY);
-        lastScrollY = y;
+        var len = 70 + Math.random() * 170;
+        var speed = 6 + Math.random() * 9;
+        var alpha = 0.05 + Math.random() * 0.08;
 
-        driftBoost = Math.min(2.2, 1 + dy / 180);
-        clearTimeout(window.__boostT);
-        window.__boostT = setTimeout(function(){ driftBoost = 1; }, 140);
-      }, { passive:true });
-
-      window.addEventListener("mousemove", function(e){
-        if (!w || !h) return;
-        px = (e.clientX / w - 0.5);
-        py = (e.clientY / h - 0.5);
-      }, { passive:true });
-
-      function maybeSpawnShooter(){
-        if (shooters.length > 1) return;
-        if (Math.random() > 0.006) return;
-
-        var startX = rand(-w * 0.2, w * 0.8);
-        var startY = rand(-h * 0.2, h * 0.3);
-
-        var angle = rand(Math.PI * 1.15, Math.PI * 1.28);
-        var speed = rand(14, 20);
-        var life = rand(18, 26);
-
-        shooters.push({
-          x: startX, y: startY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          life: life, max: life
+        // diagonal down-right
+        streaks.push({
+          x: x, y: y,
+          vx: speed * 1.15,
+          vy: speed * 0.75,
+          len: len,
+          a: alpha
         });
       }
 
-      function step(){
-        if (!running) return;
-
+      function step() {
         ctx.clearRect(0, 0, w, h);
 
-        var d = drift();
+        // slight veil so canvas is never "loud"
+        ctx.fillStyle = "rgba(0,0,0,0.10)";
+        ctx.fillRect(0, 0, w, h);
 
-        for (var i = 0; i < stars.length; i++){
-          var s = stars[i];
+        // keep a steady spawn rate
+        if (Math.random() < 0.70) spawn();
 
-          s.x += d.vx * s.s * 3.2 + px * s.s * 0.65;
-          s.y += d.vy * s.s * 3.2 + py * s.s * 0.65;
+        for (var i = streaks.length - 1; i >= 0; i--) {
+          var s = streaks[i];
+          s.x += s.vx;
+          s.y += s.vy;
 
-          if (s.x > w + 10) s.x = -10;
-          if (s.y > h + 10) s.y = -10;
-          if (s.x < -10) s.x = w + 10;
+          var x2 = s.x - s.len;
+          var y2 = s.y - s.len * 0.6;
 
-          ctx.fillStyle = "rgba(255,255,255," + s.a + ")";
-          ctx.beginPath();
-          ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-          ctx.fill();
-        }
+          var g = ctx.createLinearGradient(s.x, s.y, x2, y2);
+          g.addColorStop(0, "rgba(255,255,255," + s.a + ")");
+          g.addColorStop(0.5, "rgba(255,255,255," + (s.a * 0.25) + ")");
+          g.addColorStop(1, "rgba(255,255,255,0)");
 
-        maybeSpawnShooter();
-        for (var j = shooters.length - 1; j >= 0; j--){
-          var sh = shooters[j];
-
-          sh.x += sh.vx;
-          sh.y += sh.vy;
-          sh.life -= 1;
-
-          var t = Math.max(0, sh.life / sh.max);
-          var tail = 160 * (1 - t) + 60;
-
-          var dx = sh.vx;
-          var dy = sh.vy;
-          var len = Math.sqrt(dx*dx + dy*dy) || 1;
-          var tx = (dx / len) * tail;
-          var ty = (dy / len) * tail;
-
-          var grad = ctx.createLinearGradient(sh.x, sh.y, sh.x - tx, sh.y - ty);
-          grad.addColorStop(0, "rgba(255,255,255," + (0.75 * t) + ")");
-          grad.addColorStop(0.4, "rgba(255,255,255," + (0.22 * t) + ")");
-          grad.addColorStop(1, "rgba(255,255,255,0)");
-
-          ctx.strokeStyle = grad;
-          ctx.lineWidth = 2;
+          ctx.strokeStyle = g;
+          ctx.lineWidth = 1.2;
           ctx.lineCap = "round";
           ctx.beginPath();
-          ctx.moveTo(sh.x, sh.y);
-          ctx.lineTo(sh.x - tx, sh.y - ty);
+          ctx.moveTo(s.x, s.y);
+          ctx.lineTo(x2, y2);
           ctx.stroke();
 
-          if (sh.life <= 0 || sh.x < -300 || sh.y > h + 300){
-            shooters.splice(j, 1);
+          if (s.x > w + 300 || s.y > h + 300) {
+            streaks.splice(i, 1);
           }
         }
 
         requestAnimationFrame(step);
       }
 
-      function onVis(){
-        running = !document.hidden;
-        if (running) step();
-      }
-
-      window.addEventListener("resize", resize, { passive:true });
-      document.addEventListener("visibilitychange", onVis);
-
+      window.addEventListener("resize", resize, { passive: true });
       resize();
       step();
     })();
