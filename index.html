@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -9,13 +10,15 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=1200">
+  <link rel="stylesheet" href="style.css?v=2001">
 </head>
 
 <body>
   <div class="bg" aria-hidden="true">
-    <div class="shooting s1"></div>
-    <div class="shooting s2"></div>
+    <div class="bg-nebula"></div>
+    <div class="bg-stars"></div>
+    <div class="bg-grid"></div>
+    <div class="bg-grain"></div>
   </div>
 
   <div class="cursor-glow" id="glow" aria-hidden="true"></div>
@@ -65,26 +68,41 @@
   <script>
     (function () {
       var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-      if (reduce || coarse) return;
+      var fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
+      if (reduce || !fine) return;
 
+      var root = document.documentElement;
       var glow = document.getElementById("glow");
-      if (!glow) return;
 
-      var x = -9999, y = -9999, tx = -9999, ty = -9999;
+      var mx = 0, my = 0;
+      var px = 0, py = 0;
+      var gx = -9999, gy = -9999;
+      var tx = -9999, ty = -9999;
 
       window.addEventListener("mousemove", function (e) {
+        mx = (e.clientX / window.innerWidth) - 0.5;
+        my = (e.clientY / window.innerHeight) - 0.5;
         tx = e.clientX;
         ty = e.clientY;
       }, { passive: true });
 
-      function loop() {
-        x += (tx - x) * 0.10;
-        y += (ty - y) * 0.10;
-        glow.style.transform = "translate3d(" + (x - 180) + "px," + (y - 180) + "px,0)";
-        requestAnimationFrame(loop);
+      function raf() {
+        px += (mx - px) * 0.08;
+        py += (my - py) * 0.08;
+
+        root.style.setProperty("--parx", (px * 18).toFixed(2) + "px");
+        root.style.setProperty("--pary", (py * 14).toFixed(2) + "px");
+
+        if (glow) {
+          gx += (tx - gx) * 0.12;
+          gy += (ty - gy) * 0.12;
+          glow.style.transform = "translate3d(" + (gx - 180) + "px," + (gy - 180) + "px,0)";
+        }
+
+        requestAnimationFrame(raf);
       }
-      loop();
+
+      raf();
     })();
   </script>
 </body>
