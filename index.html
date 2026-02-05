@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -9,8 +10,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css?v=2001">
+  <!-- bump this number whenever you change CSS -->
+  <link rel="stylesheet" href="style.css?v=3001">
 </head>
+
 <body>
   <div class="bg" aria-hidden="true">
     <div class="bg-nebula"></div>
@@ -18,9 +21,12 @@
     <div class="bg-grid"></div>
     <div class="bg-grain"></div>
   </div>
+
   <div class="cursor-glow" id="glow" aria-hidden="true"></div>
+
   <main class="wrap">
     <h1 class="name">Carter Wang</h1>
+
     <p class="bio">
       Hey, I'm Carter! I grew up in Southern California, studied business at UC Santa Cruz, and am now living in Taipei working as an associate at a venture firm,
       <a href="https://www.886studios.com" target="_blank" rel="noreferrer">886 Studios</a>, alongside the founders of Twitch and Guitar Hero.
@@ -71,6 +77,7 @@
 
       var mx = 0, my = 0;
       var px = 0, py = 0;
+
       var gx = -9999, gy = -9999;
       var tx = -9999, ty = -9999;
 
@@ -82,15 +89,15 @@
       }, { passive: true });
 
       function raf() {
-        px += (mx - px) * 0.08;
-        py += (my - py) * 0.08;
+        px += (mx - px) * 0.12;
+        py += (my - py) * 0.12;
 
-        root.style.setProperty("--parx", (px * 18).toFixed(2) + "px");
-        root.style.setProperty("--pary", (py * 14).toFixed(2) + "px");
+        root.style.setProperty("--parx", (px * 26).toFixed(2) + "px");
+        root.style.setProperty("--pary", (py * 18).toFixed(2) + "px");
 
         if (glow) {
-          gx += (tx - gx) * 0.12;
-          gy += (ty - gy) * 0.12;
+          gx += (tx - gx) * 0.18;
+          gy += (ty - gy) * 0.18;
           glow.style.transform = "translate3d(" + (gx - 180) + "px," + (gy - 180) + "px,0)";
         }
 
