@@ -1,0 +1,185 @@
+:root{
+  --max: 680px;
+}
+
+/* Make taps feel instant */
+a, button{
+  -webkit-tap-highlight-color: rgba(249,115,22,0.20);
+  touch-action: manipulation;
+}
+
+/* Mobile should feel app-like */
+.wrap{
+  padding: 18px 18px 56px !important;
+}
+
+/* Mobile entrance animations */
+.name{
+  font-size: 44px !important;
+  margin-bottom: 14px !important;
+  animation: riseIn 520ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.bio{
+  font-size: 18px !important;
+  line-height: 1.86 !important;
+  margin-bottom: 18px !important;
+  animation: riseIn 520ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.bio:nth-of-type(1){ animation-delay: 40ms; }
+.bio:nth-of-type(2){ animation-delay: 90ms; }
+.bio:nth-of-type(3){ animation-delay: 140ms; }
+
+.links{
+  font-size: 16.5px !important;
+  line-height: 1.7 !important;
+  margin: 6px 0 34px !important;
+  animation: riseIn 520ms cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: 180ms;
+}
+
+h2{
+  margin-top: 44px !important;
+  padding-top: 16px !important;
+  animation: riseIn 520ms cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: 210ms;
+}
+
+.essay-list{
+  margin-top: 10px !important;
+  animation: riseIn 520ms cubic-bezier(.2,.8,.2,1) both;
+  animation-delay: 240ms;
+}
+
+@keyframes riseIn{
+  from{ opacity:0; transform: translateY(10px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+
+/* Remove desktop cursor glow */
+.cursor-glow{
+  display:none !important;
+}
+
+/* Mobile backdrop: simpler and smoother */
+.bg-grid{
+  display:none !important;
+}
+
+.bg-nebula,
+.bg-stars,
+.bg-grain,
+.bg-bands{
+  transform: none !important;
+}
+
+.bg-nebula{
+  filter: blur(10px) !important;
+  opacity: 0.98 !important;
+}
+
+.bg-stars{
+  opacity: 0.22 !important;
+}
+
+.bg-grain{
+  opacity: 0.06 !important;
+}
+
+/* Speed vibe: stronger but still calm */
+.bg-bands{
+  opacity: 0.22 !important;
+  filter: blur(1.5px) !important;
+}
+
+/* Essays as tappable “rows” with ripple + press */
+.essay-list li{
+  grid-template-columns: 1fr auto !important;
+  column-gap: 12px !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+}
+
+.essay-list li::before{
+  content: "" !important;
+  display:none !important;
+}
+
+.essay-list a{
+  position: relative;
+  overflow: hidden;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content: space-between !important;
+
+  width: 100% !important;
+  padding: 14px 14px !important;
+  margin-left: 0 !important;
+
+  border-radius: 14px !important;
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+
+  color: var(--text) !important;
+  text-shadow: 0 10px 40px rgba(0,0,0,0.35);
+
+  transform: translateZ(0);
+  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.essay-list a::after{
+  content: "›";
+  font-size: 22px;
+  line-height: 1;
+  color: rgba(249,115,22,0.95);
+  margin-left: 12px;
+  transform: translateY(-1px);
+  transition: transform 120ms ease;
+}
+
+/* Ripple */
+.essay-list a::before{
+  content:"";
+  position:absolute;
+  left: var(--rx, 50%);
+  top: var(--ry, 50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%) scale(0);
+  opacity: 0;
+  background: radial-gradient(circle, rgba(249,115,22,0.30), rgba(249,115,22,0) 70%);
+}
+
+/* Press feedback */
+.essay-list a:active{
+  transform: scale(0.985);
+  background: rgba(255,255,255,0.075) !important;
+  border-color: rgba(249,115,22,0.28) !important;
+}
+
+.essay-list a:active::after{
+  transform: translateY(-1px) translateX(3px);
+}
+
+.essay-list a:active::before{
+  animation: ripple 420ms ease-out both;
+}
+
+@keyframes ripple{
+  0%{ transform: translate(-50%, -50%) scale(0); opacity: 0.0; }
+  15%{ opacity: 1; }
+  100%{ transform: translate(-50%, -50%) scale(16); opacity: 0; }
+}
+
+/* Global link active feedback */
+a:active{
+  opacity: 0.92;
+}
+
+/* Reduce motion if user wants */
+@media (prefers-reduced-motion: reduce){
+  .name, .bio, .links, h2, .essay-list{ animation:none !important; }
+}
