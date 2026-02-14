@@ -1,0 +1,5 @@
+node_modules
+.next
+.env.local
+coverage
+npm-debug.log*
