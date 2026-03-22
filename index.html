@@ -3,109 +3,50 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Carter Wang</title>
-  <meta name="description" content="Personal site of Carter Wang — essays and thoughts on technology, culture, and human nature.">
-
+  <title>Micro Journal</title>
+  <meta name="description" content="A simple micro journaling app with local storage.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-  <!-- bump this number whenever you change CSS -->
-  <link rel="stylesheet" href="style.css?v=3001">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <div class="bg" aria-hidden="true">
-    <div class="bg-nebula"></div>
-    <div class="bg-stars"></div>
-    <div class="bg-grid"></div>
-    <div class="bg-grain"></div>
-  </div>
+  <main class="app-shell">
+    <section class="composer card" aria-labelledby="composer-title">
+      <h1 id="composer-title">Micro Journal</h1>
+      <p class="subtext">Capture quick thoughts, ideas, or reflections.</p>
 
-  <div class="cursor-glow" id="glow" aria-hidden="true"></div>
+      <form id="entry-form" class="entry-form">
+        <label for="entry-text" class="field-label">Entry</label>
+        <textarea id="entry-text" name="entry" rows="5" maxlength="1000" placeholder="Write a short journal entry..." required></textarea>
 
-  <main class="wrap">
-    <h1 class="name">Carter Wang</h1>
+        <label for="entry-tags" class="field-label">Tags (optional)</label>
+        <input id="entry-tags" name="tags" type="text" placeholder="work, gratitude, idea">
 
-    <p class="bio">
-      Hey, I'm Carter! I grew up in Southern California, studied business at UC Santa Cruz, and am now living in Taipei working as an associate at a venture firm,
-      <a href="https://www.886studios.com" target="_blank" rel="noreferrer">886 Studios</a>, alongside the founders of Twitch and Guitar Hero.
-      We’re building an <a href="https://www.withikigai.com" target="_blank" rel="noreferrer">accelerator</a> that backs & supports early-stage startups, bringing a slice of Silicon Valley to Asia. Before that, I was a Research Fellow at Contrary Research, where I profiled and wrote about leading startups.
-    </p>
+        <div class="actions">
+          <button type="submit" id="save-button">Save entry</button>
+        </div>
+      </form>
+    </section>
 
-    <p class="bio">
-      Outside of work, you’ll usually find me watching the Lakers, playing poker, biking around the city, or writing in a cafe.
-    </p>
-
-    <p class="bio">
-      I’m fascinated by how technology, culture, and human nature intertwine to shape progress.
-    </p>
-
-    <p class="links">
-      Writing: <a href="https://carterko.substack.com" target="_blank" rel="noreferrer">flying Arrows</a><br>
-      Reach me at <a href="mailto:cartergw01@gmail.com">cartergw01@gmail.com</a> ·
-      <a href="https://x.com/CarterKoWang" target="_blank" rel="noreferrer">X</a> ·
-      <a href="https://www.linkedin.com/in/cartergrantwang" target="_blank" rel="noreferrer">LinkedIn</a>
-    </p>
-
-    <h2>Essays</h2>
-    <ul class="essay-list">
-      <li><a href="https://open.substack.com/pub/carterko/p/slop-and-spiral" target="_blank" rel="noreferrer">Slop & Spiral</a></li>
-      <li><a href="https://carterko.substack.com/p/we-all-have-superpowers" target="_blank" rel="noreferrer">We All Have Superpowers</a></li>
-      <li><a href="https://carterko.substack.com/p/the-mirage-of-identity" target="_blank" rel="noreferrer">The Mirage of Identity</a></li>
-      <li><a href="https://carterko.substack.com/p/from-crash-to-curiosity" target="_blank" rel="noreferrer">From Crash to Curiosity</a></li>
-      <li><a href="https://carterko.substack.com/p/work-as-play" target="_blank" rel="noreferrer">Work as Play</a></li>
-    </ul>
-
-    <footer>
-      <small>© <span id="year"></span> Carter Wang</small>
-    </footer>
+    <section class="feed" aria-labelledby="feed-title">
+      <div class="feed-header">
+        <h2 id="feed-title">Past entries</h2>
+      </div>
+      <div id="entries-list" class="entries-list"></div>
+    </section>
   </main>
 
-  <script>
-    document.getElementById("year").textContent = new Date().getFullYear();
-  </script>
+  <template id="entry-card-template">
+    <article class="entry-card card">
+      <header class="entry-meta">
+        <time class="entry-time"></time>
+      </header>
+      <p class="entry-content"></p>
+      <div class="tag-row" aria-label="Tags"></div>
+    </article>
+  </template>
 
-  <script>
-    (function () {
-      var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      var fine = window.matchMedia && window.matchMedia("(pointer: fine)").matches;
-      if (reduce || !fine) return;
-
-      var root = document.documentElement;
-      var glow = document.getElementById("glow");
-
-      var mx = 0, my = 0;
-      var px = 0, py = 0;
-
-      var gx = -9999, gy = -9999;
-      var tx = -9999, ty = -9999;
-
-      window.addEventListener("mousemove", function (e) {
-        mx = (e.clientX / window.innerWidth) - 0.5;
-        my = (e.clientY / window.innerHeight) - 0.5;
-        tx = e.clientX;
-        ty = e.clientY;
-      }, { passive: true });
-
-      function raf() {
-        px += (mx - px) * 0.12;
-        py += (my - py) * 0.12;
-
-        root.style.setProperty("--parx", (px * 26).toFixed(2) + "px");
-        root.style.setProperty("--pary", (py * 18).toFixed(2) + "px");
-
-        if (glow) {
-          gx += (tx - gx) * 0.18;
-          gy += (ty - gy) * 0.18;
-          glow.style.transform = "translate3d(" + (gx - 180) + "px," + (gy - 180) + "px,0)";
-        }
-
-        requestAnimationFrame(raf);
-      }
-
-      raf();
-    })();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>
